@@ -27,10 +27,12 @@ class TCPServer {
     TCPServer(TCPServer&&) = delete;
     TCPServer& operator=(TCPServer&&) = delete;
 
-    TCPServer(const unsigned short port, const std::string& addr);
+    TCPServer(const unsigned short port, const std::string& addr, const size_t buffer_size);
     ~TCPServer();
     
     // Normal methods
+    void Bind();
+    void Kill() noexcept;
 
   private:
     // Private methods
@@ -47,6 +49,7 @@ class TCPServer {
     size_t buffer_size_;
 };
 
+
 /// @brief Exceptions of TCPServer
 class TCPServerException : public std::exception {
   public:
@@ -56,17 +59,22 @@ class TCPServerException : public std::exception {
     std::string message_;
 };
 
-
-/// @brief represents an error intializing the socket file descriptor.
+/// @brief Represents an error intializing the socket file descriptor.
 class InitializeSocketException : public TCPServerException {
   public:
-    InitializeSocketException() : TCPServerException("Error initializing the socket file descriptor") {}
+    InitializeSocketException() : TCPServerException("Error initializing the socket file descriptor.") {}
 };
 
-/// @brief represents an error converting from string to binary a IPv4 address.
+/// @brief Represents an error converting from string to binary a IPv4 address.
 class ConvertBinaryAddrException : public TCPServerException {
   public:
-    ConvertBinaryAddrException() : TCPServerException("Error converting the string address to binary") {}
+    ConvertBinaryAddrException() : TCPServerException("Error converting the string address to binary.") {}
+};
+
+/// @brief Represents an error binding the socket.
+class BindingException : public TCPServerException {
+  public:
+    BindingException() : TCPServerException("Error while binding the socket file descriptor.") {}
 };
 
 #endif

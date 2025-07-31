@@ -21,8 +21,38 @@
 /// @brief Constructor of the class TCPServer
 /// @param port 
 /// @param address 
-TCPServer::TCPServer(const unsigned short port, const std::string& address) {
+/// @param buffer_size
+TCPServer::TCPServer(const unsigned short port, const std::string& address, const size_t buffer_size) : buffer_(nullptr), buffer_size_(0) {
+  InitializeSocket();
+  InitializeAddress(port, ConvertAddrBinary(address));
 
+  buffer_ = new unsigned char[buffer_size];
+  buffer_size_ = buffer_size;
+}
+
+/// @brief Destructor of the class TCPServer
+TCPServer::~TCPServer() {
+  Kill();
+  delete[] buffer_;
+  buffer_ = 0;
+}
+
+/// @brief Binds the socket to an ip and a address.
+void TCPServer::Bind() {
+  sockaddr* aux_pointer = reinterpret_cast<sockaddr*>(&addr_);
+  socklen_t aux_size = static_cast<socklen_t>(sizeof(addr_));
+
+  if (bind(socket_fd_, aux_pointer, aux_size) < 0) {
+    throw(BindingException());
+  }
+}
+
+/// @brief Kill the server, closing the socket. Keeps the buffer
+void TCPServer::Kill() {
+  if (socket_fd_ >= 0) {
+    close(socket_fd_);
+    socket_fd_ = -1;
+  }
 }
 
 /// @brief Initialize the file descriptor for the socket
