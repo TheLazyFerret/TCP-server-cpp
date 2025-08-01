@@ -89,6 +89,10 @@ class AcceptException : public TCPServerException {
     AcceptException(const int error_code) : TCPServerException(std::string(strerror(error_code))) {}
 };
 
-class 
+/// @brief Represents an error sending information.
+class SendException : public TCPServerException {
+  public:
+    SendException(const int error_code) : TCPServerException(std::string(strerror(error_code))) {}
+};
 
 #endif
