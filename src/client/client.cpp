@@ -24,11 +24,12 @@ int main(){
   }
   printf("[+]TCP server socket created.\n");
 
-  memset(&addr, '\0', sizeof(addr));
+  memset(&addr, 0, sizeof(addr));
   addr.sin_family = AF_INET;
-  addr.sin_port = port;
+  addr.sin_port = htons(port);
   addr.sin_addr.s_addr = inet_addr(ip);
 
+    std::cout << "[*]Connecting to " << INADDR_LOOPBACK << ":" << port << "..." << std::endl;
   int success = connect(sock, (struct sockaddr*)&addr, sizeof(addr));
 if (success < 0) {
   perror("[-]Connect error");
