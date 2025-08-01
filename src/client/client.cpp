@@ -6,41 +6,8 @@
 
 #include <iostream>
 
+// Reminder that I need to use htonl if using INADDR_LOOPBACK :(
+
 int main(){
-
-  char *ip = "127.0.0.1";
-  int port = 5566;
-
-  int sock;
-  struct sockaddr_in addr;
-  socklen_t addr_size;
-  char buffer[1024];
-  int n;
-
-  sock = socket(AF_INET, SOCK_STREAM, 0);
-  if (sock < 0){
-    perror("[-]Socket error");
-    exit(1);
-  }
-  printf("[+]TCP server socket created.\n");
-
-  memset(&addr, 0, sizeof(addr));
-  addr.sin_family = AF_INET;
-  addr.sin_port = htons(port);
-  addr.sin_addr.s_addr = inet_addr(ip);
-
-    std::cout << "[*]Connecting to " << INADDR_LOOPBACK << ":" << port << "..." << std::endl;
-  int success = connect(sock, (struct sockaddr*)&addr, sizeof(addr));
-if (success < 0) {
-  perror("[-]Connect error");
-  exit(1);
-}
-  printf("Connected to the server.\n");
-
-
-  close(sock);
-  printf("Disconnected from the server.\n");
-
-  return 0;
 
 }
