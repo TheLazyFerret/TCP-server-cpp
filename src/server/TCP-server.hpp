@@ -32,19 +32,12 @@ class TCPServer {
     
     // Normal methods
     void Initialize();
-
     sockaddr_in Accept();
-
     void Kill() noexcept;
 
   private:
     // Private methods
-    void InitializeSocket();
-    void InitializeAddress(const unsigned short port, const in_addr& addr) noexcept;
     static in_addr ConvertAddrBinary(const std::string& addr);
-
-    void Bind();
-    void Listen();
 
     // Attributes
     sockaddr_in addr_;
