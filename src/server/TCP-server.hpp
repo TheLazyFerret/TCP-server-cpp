@@ -17,8 +17,6 @@
 #include <exception>
 #include <string>
 
-#define TCP_SERVER_DEBUG
-
 /// @brief Abstraction of a TCP server.
 class TCPServer {
   public:

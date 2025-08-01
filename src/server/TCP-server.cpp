@@ -18,10 +18,10 @@
 
 #include "TCP-server.hpp"
 
-#ifdef TCP_SERVER_DEBUG
-  #define DEBUG(MESSAGE) std::cerr << "[!] " <<  MESSAGE << std::endl
+#ifdef DEBUG
+  #define DEBUG_PRINT(MESSAGE) std::cerr << "[!] " <<  MESSAGE << std::endl
 #else
-  #define DEBUG(MESSAGE)
+  #define DEBUG_PRINT(MESSAGE)
 #endif
 
 /// @brief Set the max ammount of connection the socket will accept.
@@ -37,7 +37,7 @@ TCPServer::TCPServer(const unsigned short port, const std::string& address, cons
 
   buffer_ = new unsigned char[buffer_size];
   buffer_size_ = buffer_size;
-  DEBUG("Buffer allocated with size: " << buffer_size_);
+  DEBUG_PRINT("Buffer allocated with size: " << buffer_size_);
 }
 
 /// @brief Destructor of the class TCPServer
@@ -68,7 +68,7 @@ sockaddr_in TCPServer::Accept() {
     throw(AcceptException()); 
   }
 
-  DEBUG("Accepted connection request from client with address: " << ntohl(client.sin_addr.s_addr));
+  DEBUG_PRINT("Accepted connection request from client with address: " << ntohl(client.sin_addr.s_addr));
   return client;
  }
 
@@ -87,7 +87,7 @@ void TCPServer::InitializeSocket() {
     throw(InitializeSocketException());
   }
 
-  DEBUG("Socket file descriptor initialized in: " << socket_fd_);
+  DEBUG_PRINT("Socket file descriptor initialized in: " << socket_fd_);
 }
 
 /// @brief Initialize the address of the server
@@ -109,7 +109,7 @@ in_addr TCPServer::ConvertAddrBinary(const std::string& address) {
     throw(ConvertBinaryAddrException());
   }
 
-  DEBUG("Address converted from: " << address << " to: " << addr.s_addr);
+  DEBUG_PRINT("Address converted from: " << address << " to: " << addr.s_addr);
   return addr;
 }
 
@@ -121,8 +121,8 @@ void TCPServer::Bind() {
     throw(BindingException());
   }
 
-  DEBUG("Socket binded to address: " << addr_.sin_addr.s_addr);
-  DEBUG("Socket binded to port: " << ntohs(addr_.sin_port));
+  DEBUG_PRINT("Socket binded to address: " << addr_.sin_addr.s_addr);
+  DEBUG_PRINT("Socket binded to port: " << ntohs(addr_.sin_port));
 }
 
 /// @brief Set the socket in passive mode.
@@ -131,5 +131,5 @@ void TCPServer::Listen() {
     throw(ListeningException());
   }
   
-  DEBUG("Socket set to passive mode with: " << KMaxConnections << " connections");
+  DEBUG_PRINT("Socket set to passive mode with: " << KMaxConnections << " connections");
 }
