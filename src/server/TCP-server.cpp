@@ -55,7 +55,8 @@ TCPServer::TCPServer(const unsigned short port, const std::string& address, cons
 TCPServer::~TCPServer() {
   Kill();
   delete[] buffer_;
-  buffer_ = 0;
+  buffer_ = nullptr;
+  buffer_size_ = 0;
 }
 
 /// @brief Start the server, Binding and setting it in passive mode
