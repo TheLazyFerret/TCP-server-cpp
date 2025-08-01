@@ -47,27 +47,27 @@ void TCPServer::Bind() {
   }
 }
 
+/// @brief Set the socket in passive mode.
 void TCPServer::Listen() {
-  if (listen(socket_fd_, 5) < 0) {
+  if (listen(socket_fd_, MAX_CONNECTIONS) < 0) {
     throw(ListeningException());
   }
 }
 
-void TCPServer::Accept() {
+/// @brief Calls the subrutine "Accept()" and waiting untils a client request.
+/// @return The addr of the client.
+sockaddr_in TCPServer::Accept() {
   sockaddr_in client;
   memset(&client, 0, sizeof(client));
 
   sockaddr* aux_pointer = reinterpret_cast<sockaddr*>(&client);
   socklen_t aux_size = static_cast<socklen_t>(sizeof(client));
 
-  std::cout << "accepting connections..." << std::endl;
-
   if (accept(socket_fd_, aux_pointer, &aux_size) < 0) {
     throw(AcceptException()); 
   }
- 
-  std::cout << "connection accepted from: " << client.sin_addr.s_addr << std::endl;
-}
+  return client;
+ }
 
 /// @brief Kill the server, closing the socket. Keeps the buffer
 void TCPServer::Kill() noexcept {

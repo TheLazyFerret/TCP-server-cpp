@@ -17,6 +17,8 @@
 #include <exception>
 #include <string>
 
+#define MAX_CONNECTIONS 2
+
 /// @brief Abstraction of a TCP server.
 class TCPServer {
   public:
@@ -33,8 +35,7 @@ class TCPServer {
     // Normal methods
     void Bind();
     void Listen();
-    void Accept();
-
+    sockaddr_in Accept();
 
     void Kill() noexcept;
 
@@ -81,11 +82,13 @@ class BindingException : public TCPServerException {
     BindingException() : TCPServerException("Error while binding the socket file descriptor.") {}
 };
 
+/// @brief Represents an error setting the socket in passive mode.
 class ListeningException : public TCPServerException {
   public:
     ListeningException() : TCPServerException("Error setting the socket as passive.") {}
 };
 
+/// @brief Represents an error accepting a connection.
 class AcceptException : public TCPServerException {
   public:
     AcceptException() : TCPServerException("Error accepting a connection.") {}
