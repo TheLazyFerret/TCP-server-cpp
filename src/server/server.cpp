@@ -11,7 +11,14 @@
 
 #include "TCP-server.hpp"
 
+#define PORT 5566
+
 int main(void) {
-  
+  TCPServer server(PORT, "127.0.0.1", 100);
+  server.Bind();
+  server.Listen();
+  server.Accept();
+
+  server.Kill();
   return 0;
 }

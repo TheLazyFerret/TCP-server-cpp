@@ -32,6 +32,10 @@ class TCPServer {
     
     // Normal methods
     void Bind();
+    void Listen();
+    void Accept();
+
+
     void Kill() noexcept;
 
   private:
@@ -75,6 +79,16 @@ class ConvertBinaryAddrException : public TCPServerException {
 class BindingException : public TCPServerException {
   public:
     BindingException() : TCPServerException("Error while binding the socket file descriptor.") {}
+};
+
+class ListeningException : public TCPServerException {
+  public:
+    ListeningException() : TCPServerException("Error setting the socket as passive.") {}
+};
+
+class AcceptException : public TCPServerException {
+  public:
+    AcceptException() : TCPServerException("Error accepting a connection.") {}
 };
 
 #endif
