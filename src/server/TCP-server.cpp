@@ -18,6 +18,15 @@
 
 #include "TCP-server.hpp"
 
+#ifdef TCP_SERVER_DEBUG
+  #define DEBUG(MESSAGE) std::cerr << "[!] " <<  MESSAGE << std::endl
+#else
+  #define DEBUG(MESSAGE)
+#endif
+
+/// @brief Set the max ammount of connection the socket will accept.
+constexpr int KMaxConnections = 2;
+
 /// @brief Constructor of the class TCPServer
 /// @param port 
 /// @param address 
@@ -28,6 +37,7 @@ TCPServer::TCPServer(const unsigned short port, const std::string& address, cons
 
   buffer_ = new unsigned char[buffer_size];
   buffer_size_ = buffer_size;
+  DEBUG("Buffer allocated with size: " << buffer_size_);
 }
 
 /// @brief Destructor of the class TCPServer
@@ -37,21 +47,12 @@ TCPServer::~TCPServer() {
   buffer_ = 0;
 }
 
-/// @brief Binds the socket to an ip and a address.
-void TCPServer::Bind() {
-  sockaddr* aux_pointer = reinterpret_cast<sockaddr*>(&addr_);
-  socklen_t aux_size = static_cast<socklen_t>(sizeof(addr_));
-
-  if (bind(socket_fd_, aux_pointer, aux_size) < 0) {
-    throw(BindingException());
-  }
-}
-
-/// @brief Set the socket in passive mode.
-void TCPServer::Listen() {
-  if (listen(socket_fd_, MAX_CONNECTIONS) < 0) {
-    throw(ListeningException());
-  }
+/// @brief Start the server, Binding and setting it in passive mode
+void TCPServer::Initialize() {
+  // Bind the socket file descriptor to the address and port.
+  Bind();
+  // Set the socket to passive mode.
+  Listen();
 }
 
 /// @brief Calls the subrutine "Accept()" and waiting untils a client request.
@@ -59,13 +60,15 @@ void TCPServer::Listen() {
 sockaddr_in TCPServer::Accept() {
   sockaddr_in client;
   memset(&client, 0, sizeof(client));
-
   sockaddr* aux_pointer = reinterpret_cast<sockaddr*>(&client);
   socklen_t aux_size = static_cast<socklen_t>(sizeof(client));
 
   if (accept(socket_fd_, aux_pointer, &aux_size) < 0) {
+    std::cout << "errno: " << errno << std::endl;
     throw(AcceptException()); 
   }
+
+  DEBUG("Accepted connection request from client with address: " << ntohl(client.sin_addr.s_addr));
   return client;
  }
 
@@ -83,6 +86,8 @@ void TCPServer::InitializeSocket() {
   if (socket_fd_ < 0) {
     throw(InitializeSocketException());
   }
+
+  DEBUG("Socket file descriptor initialized in: " << socket_fd_);
 }
 
 /// @brief Initialize the address of the server
@@ -103,5 +108,28 @@ in_addr TCPServer::ConvertAddrBinary(const std::string& address) {
   if (inet_aton(address.c_str(), &addr) < 0) {
     throw(ConvertBinaryAddrException());
   }
+
+  DEBUG("Address converted from: " << address << " to: " << addr.s_addr);
   return addr;
+}
+
+/// @brief Binds the socket to an ip and a address.
+void TCPServer::Bind() {
+  sockaddr* aux_pointer = reinterpret_cast<sockaddr*>(&addr_);
+  socklen_t aux_size = static_cast<socklen_t>(sizeof(addr_));
+  if (bind(socket_fd_, aux_pointer, aux_size) < 0) {
+    throw(BindingException());
+  }
+
+  DEBUG("Socket binded to address: " << addr_.sin_addr.s_addr);
+  DEBUG("Socket binded to port: " << ntohs(addr_.sin_port));
+}
+
+/// @brief Set the socket in passive mode.
+void TCPServer::Listen() {
+  if (listen(socket_fd_, KMaxConnections) < 0) {
+    throw(ListeningException());
+  }
+  
+  DEBUG("Socket set to passive mode with: " << KMaxConnections << " connections");
 }

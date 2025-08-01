@@ -17,7 +17,7 @@
 #include <exception>
 #include <string>
 
-#define MAX_CONNECTIONS 2
+#define TCP_SERVER_DEBUG
 
 /// @brief Abstraction of a TCP server.
 class TCPServer {
@@ -33,8 +33,8 @@ class TCPServer {
     ~TCPServer();
     
     // Normal methods
-    void Bind();
-    void Listen();
+    void Initialize();
+
     sockaddr_in Accept();
 
     void Kill() noexcept;
@@ -45,7 +45,8 @@ class TCPServer {
     void InitializeAddress(const unsigned short port, const in_addr& addr) noexcept;
     static in_addr ConvertAddrBinary(const std::string& addr);
 
-
+    void Bind();
+    void Listen();
 
     // Attributes
     sockaddr_in addr_;
