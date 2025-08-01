@@ -15,6 +15,8 @@ int main(void) {
   TCPServer server(5000, "127.0.0.1", 100);
   server.Initialize();
 
+  server.Kill();
+
   auto aux = server.Accept();
   std::cout << "cliente conectado desde: " << ntohl(aux.sin_addr.s_addr) << std::endl;
 

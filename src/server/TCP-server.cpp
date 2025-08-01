@@ -35,7 +35,7 @@ TCPServer::TCPServer(const unsigned short port, const std::string& address, cons
   // Initialize socket
   socket_fd_ = socket(AF_INET, SOCK_STREAM, 0);
   if (socket_fd_ < 0) {
-    throw(InitializeSocketException());
+    throw(InitializeSocketException(errno));
   }
   DEBUG_PRINT("Socket file descriptor initialized in: " << socket_fd_);
 
@@ -65,14 +65,14 @@ void TCPServer::Initialize() {
   sockaddr* aux_pointer = reinterpret_cast<sockaddr*>(&addr_);
   socklen_t aux_size = static_cast<socklen_t>(sizeof(addr_));
   if (bind(socket_fd_, aux_pointer, aux_size) < 0) {
-    throw(BindingException());
+    throw(BindingException(errno));
   }
   DEBUG_PRINT("Socket binded to address: " << addr_.sin_addr.s_addr);
   DEBUG_PRINT("Socket binded to port: " << ntohs(addr_.sin_port));
 
   // Set the socket to passive mode.
   if (listen(socket_fd_, KMaxConnections) < 0) {
-    throw(ListeningException());
+    throw(ListeningException(errno));
   }
   DEBUG_PRINT("Socket set to passive mode with: " << KMaxConnections << " connections");
 }
@@ -87,8 +87,7 @@ sockaddr_in TCPServer::Accept() {
   socklen_t aux_size = static_cast<socklen_t>(sizeof(client));
 
   if (accept(socket_fd_, aux_pointer, &aux_size) < 0) {
-    std::cout << "errno: " << errno << std::endl;
-    throw(AcceptException()); 
+    throw(AcceptException(errno)); 
   }
 
   DEBUG_PRINT("Accepted connection request from client with address: " << ntohl(client.sin_addr.s_addr));
@@ -109,7 +108,7 @@ void TCPServer::Kill() noexcept {
 in_addr TCPServer::ConvertAddrBinary(const std::string& address) {
   in_addr addr;
   if (inet_aton(address.c_str(), &addr) < 0) {
-    throw(ConvertBinaryAddrException());
+    throw(ConvertBinaryAddrException(errno));
   }
 
   DEBUG_PRINT("Address converted from: " << address << " to: " << addr.s_addr);

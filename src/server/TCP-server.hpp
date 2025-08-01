@@ -16,6 +16,7 @@
 
 #include <exception>
 #include <string>
+#include <cstring>
 
 /// @brief Abstraction of a TCP server.
 class TCPServer {
@@ -33,7 +34,9 @@ class TCPServer {
     // Normal methods
     void Initialize();
     sockaddr_in Accept();
+    size_t Send(const size_t n_bytes = 0, const int flags = 0);
     void Kill() noexcept;
+
 
   private:
     // Private methods
@@ -59,31 +62,33 @@ class TCPServerException : public std::exception {
 /// @brief Represents an error intializing the socket file descriptor.
 class InitializeSocketException : public TCPServerException {
   public:
-    InitializeSocketException() : TCPServerException("Error initializing the socket file descriptor.") {}
+    InitializeSocketException(const int error_code) : TCPServerException(std::string(strerror(error_code))) {}
 };
 
 /// @brief Represents an error converting from string to binary a IPv4 address.
 class ConvertBinaryAddrException : public TCPServerException {
   public:
-    ConvertBinaryAddrException() : TCPServerException("Error converting the string address to binary.") {}
+    ConvertBinaryAddrException(const int error_code) : TCPServerException(std::string(strerror(error_code))) {}
 };
 
 /// @brief Represents an error binding the socket.
 class BindingException : public TCPServerException {
   public:
-    BindingException() : TCPServerException("Error while binding the socket file descriptor.") {}
+    BindingException(const int error_code) : TCPServerException(std::string(strerror(error_code))) {}
 };
 
 /// @brief Represents an error setting the socket in passive mode.
 class ListeningException : public TCPServerException {
   public:
-    ListeningException() : TCPServerException("Error setting the socket as passive.") {}
+    ListeningException(const int error_code) : TCPServerException(std::string(strerror(error_code))) {}
 };
 
 /// @brief Represents an error accepting a connection.
 class AcceptException : public TCPServerException {
   public:
-    AcceptException() : TCPServerException("Error accepting a connection.") {}
+    AcceptException(const int error_code) : TCPServerException(std::string(strerror(error_code))) {}
 };
+
+class 
 
 #endif
