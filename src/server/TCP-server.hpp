@@ -34,8 +34,7 @@ class TCPServer {
     // Normal methods
     void Initialize();
     sockaddr_in Accept();
-    size_t WrtBuffer(void* ext_buffer, size_t n_bytes = 0);
-    size_t Send(const size_t n_bytes = 0, const int flags = 0);
+    size_t Send(void* ext_buffer, const size_t n_bytes, const int flags = 0);
     void Kill() noexcept;
 
 
@@ -46,8 +45,7 @@ class TCPServer {
     // Attributes
     sockaddr_in addr_;
     int socket_fd_;
-    unsigned char* send_buffer_;
-    unsigned char* recv_buffer_;
+    unsigned char* buffer_;
     size_t buffer_size_;
 };
 
@@ -95,11 +93,6 @@ class AcceptException : public TCPServerException {
 class SendException : public TCPServerException {
   public:
     SendException(const int error_code) : TCPServerException(std::string(strerror(error_code))) {}
-};
-
-class WrtException : public TCPServerException {
-  public:
-    WrtException(const int error_code) : TCPServerException(std::string(strerror(error_code))) {}
 };
 
 #endif
