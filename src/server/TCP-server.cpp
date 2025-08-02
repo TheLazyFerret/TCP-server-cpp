@@ -32,7 +32,7 @@ constexpr size_t KDefaultBufferSize = 100;
 /// @param port 
 /// @param address 
 /// @param buffer_size
-TCPServer::TCPServer(const unsigned short port, const std::string& address, const size_t buffer_size) : buffer_(nullptr), buffer_size_(0) {
+TCPServer::TCPServer(const unsigned short port, const std::string& address, const size_t buffer_size) : send_buffer_(nullptr), recv_buffer_(nullptr), buffer_size_(0) {
   // Initialize socket
   socket_fd_ = socket(AF_INET, SOCK_STREAM, 0);
   if (socket_fd_ < 0) {
@@ -48,7 +48,8 @@ TCPServer::TCPServer(const unsigned short port, const std::string& address, cons
 
   // Initialize buffer
   const size_t size = (buffer_size == 0) ? KDefaultBufferSize : buffer_size;
-  buffer_ = new unsigned char[size];
+  send_buffer_ = new unsigned char[size];
+  recv_buffer_ = new unsigned char[size];
   buffer_size_ = size;
   TCP_DEBUG_PRINT("Buffer allocated with size: " << size);
 }
@@ -56,8 +57,10 @@ TCPServer::TCPServer(const unsigned short port, const std::string& address, cons
 /// @brief Destructor of the class TCPServer
 TCPServer::~TCPServer() {
   Kill();
-  delete[] buffer_;
-  buffer_ = nullptr;
+  delete[] send_buffer_;
+  send_buffer_ = nullptr;
+  delete[] recv_buffer_;
+  recv_buffer_ = nullptr;
   buffer_size_ = 0;
 }
 
@@ -112,8 +115,6 @@ in_addr TCPServer::ConvertAddrBinary(const std::string& address) {
   if (inet_aton(address.c_str(), &addr) < 0) {
     throw(ConvertBinaryAddrException(errno));
   }
-
-
   TCP_DEBUG_PRINT("Address converted from: " << address << " to: " << addr.s_addr)
   return addr;
 }
@@ -128,7 +129,7 @@ size_t TCPServer::Send(const size_t n_bytes = 0, const int flags = 0) {
   }
   const size_t bytes_to_send = (n_bytes == 0) ? buffer_size_ : std::min(n_bytes, buffer_size_);
 
-  const ssize_t result = send(socket_fd_, buffer_, bytes_to_send, flags);
+  const ssize_t result = send(socket_fd_, send_buffer_, bytes_to_send, flags);
   if (result < 0) {
     throw(SendException(errno));
   }
@@ -141,10 +142,12 @@ size_t TCPServer::Send(const size_t n_bytes = 0, const int flags = 0) {
 /// @param n_bytes 
 /// @return the number of bytes writed.
 size_t TCPServer::WrtBuffer(void* ext_buffer, size_t n_bytes) {
-  if (ext_buffer == nullptr || buffer_ == nullptr || buffer_size_ == 0) {
+  if (ext_buffer == nullptr || send_buffer_ == nullptr || buffer_size_ == 0) {
+    TCP_DEBUG_PRINT("Any of the buffer is not valid, won't be send any byte")
     return 0;
   }
   const size_t bytes_to_write = (n_bytes == 0) ? buffer_size_ : std::min(n_bytes, buffer_size_);
-  std::memcpy(buffer_, ext_buffer, bytes_to_write);
+  TCP_DEBUG_PRINT("Bytes to write in send_buffer_: " << bytes_to_write)
+  std::memcpy(send_buffer_, ext_buffer, bytes_to_write);
   return bytes_to_write;
 }

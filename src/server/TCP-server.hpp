@@ -46,7 +46,8 @@ class TCPServer {
     // Attributes
     sockaddr_in addr_;
     int socket_fd_;
-    unsigned char* buffer_;
+    unsigned char* send_buffer_;
+    unsigned char* recv_buffer_;
     size_t buffer_size_;
 };
 
