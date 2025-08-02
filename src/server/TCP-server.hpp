@@ -7,8 +7,8 @@
  * @brief Header file of the TCP server.
  */
 
-#ifndef TCP_SERVER
-#define TCP_SERVER
+#ifndef TCP_SERVER_HPP
+#define TCP_SERVER_HPP
 
 #include <sys/socket.h>
 #include <netinet/in.h>
