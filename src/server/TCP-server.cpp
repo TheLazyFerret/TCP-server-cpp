@@ -130,7 +130,7 @@ size_t TCPServer::SetBuffer(const void* ext, const size_t n_bytes) noexcept {
     return 0;
   }
   const size_t bytes_to_copy = (n_bytes == 0) ? buffer_size_ : std::min(n_bytes, buffer_size_);
-  TCP_DEBUG_PRINT("Number of bytes to copy: " << bytes_to_copy)
+  TCP_DEBUG_PRINT("Number of bytes to copy (SetBuffer): " << bytes_to_copy)
   
   std::memcpy(send_buffer_, ext, bytes_to_copy);
   return bytes_to_copy;
@@ -150,6 +150,10 @@ size_t TCPServer::Send(const size_t n_bytes, const int flags) {
   return static_cast<size_t>(result);
 }
 
+/// @brief Safe recv() implementation.
+/// @param n_bytes 
+/// @param flags 
+/// @return the number of bytes recovered from the socket.
 size_t TCPServer::Recv(const size_t n_bytes, const int flags) {
   const size_t bytes_to_recv = (n_bytes == 0) ? buffer_size_ : std::min(buffer_size_, n_bytes);
   TCP_DEBUG_PRINT("Number of bytes to recover: " << bytes_to_recv)
@@ -158,4 +162,19 @@ size_t TCPServer::Recv(const size_t n_bytes, const int flags) {
     throw(RecvException(errno));
   }
   return static_cast<size_t>(result);
+}
+
+/// @brief Get the get buffer.
+/// @param dest 
+/// @param n_bytes 
+/// @return the number of bytes got.
+size_t TCPServer::GetBuffer(void* dest, const size_t n_bytes) const noexcept {
+  if (dest == nullptr) {
+    return 0;
+  }
+  const size_t bytes_to_copy = (n_bytes == 0) ? buffer_size_ : std::min(buffer_size_, n_bytes);
+  TCP_DEBUG_PRINT("Number of bytes to copy (GetBuffer): " << bytes_to_copy)
+  
+  std::memcpy(dest, recv_buffer_, bytes_to_copy);
+  return bytes_to_copy;
 }

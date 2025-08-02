@@ -34,11 +34,12 @@ class TCPServer {
     // Normal methods
     void Initialize();
     sockaddr_in Accept();
-    
+
     size_t SetBuffer(const void* ext, const size_t n_bytes = 0) noexcept;
     size_t Send(const size_t n_bytes = 0, const int flags = 0);
 
     size_t Recv(const size_t n_bytes = 0, const int flags = 0);
+    size_t GetBuffer(void* dest, const size_t n_bytes = 0) const noexcept;
 
     void Kill() noexcept;
 
