@@ -32,7 +32,8 @@ constexpr size_t KDefaultBufferSize = 100;
 /// @param port 
 /// @param address 
 /// @param buffer_size
-TCPServer::TCPServer(const unsigned short port, const std::string& address, const size_t buffer_size) : send_buffer_(nullptr), recv_buffer_(nullptr), buffer_size_(0) {
+TCPServer::TCPServer(const unsigned short port, const std::string& address, const size_t buffer_size) 
+: send_buffer_(nullptr), recv_buffer_(nullptr), buffer_size_(0) {
   // Initialize socket
   socket_fd_ = socket(AF_INET, SOCK_STREAM, 0);
   if (socket_fd_ < 0) {
