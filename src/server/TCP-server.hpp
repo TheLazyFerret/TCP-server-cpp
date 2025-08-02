@@ -28,12 +28,13 @@ class TCPServer {
     TCPServer(TCPServer&&) = delete;
     TCPServer& operator=(TCPServer&&) = delete;
 
-    TCPServer(const unsigned short port, const std::string& addr, const size_t buffer_size);
+    TCPServer(const unsigned short port, const std::string& addr, const size_t buffer_size = 0);
     ~TCPServer();
     
     // Normal methods
     void Initialize();
     sockaddr_in Accept();
+    size_t WrtBuffer(void* ext_buffer, size_t n_bytes = 0);
     size_t Send(const size_t n_bytes = 0, const int flags = 0);
     void Kill() noexcept;
 
@@ -93,6 +94,11 @@ class AcceptException : public TCPServerException {
 class SendException : public TCPServerException {
   public:
     SendException(const int error_code) : TCPServerException(std::string(strerror(error_code))) {}
+};
+
+class WrtException : public TCPServerException {
+  public:
+    WrtException(const int error_code) : TCPServerException(std::string(strerror(error_code))) {}
 };
 
 #endif

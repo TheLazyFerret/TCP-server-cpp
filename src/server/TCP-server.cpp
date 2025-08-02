@@ -26,6 +26,7 @@
 
 /// @brief Set the max ammount of connection the socket will accept.
 constexpr int KMaxConnections = 2;
+constexpr size_t KDefaultBufferSize = 100;
 
 /// @brief Constructor of the class TCPServer
 /// @param port 
@@ -46,9 +47,10 @@ TCPServer::TCPServer(const unsigned short port, const std::string& address, cons
   addr_.sin_port = htons(port);
 
   // Initialize buffer
-  buffer_ = new unsigned char[buffer_size];
-  buffer_size_ = buffer_size;
-  TCP_DEBUG_PRINT("Buffer allocated with size: " << buffer_size_);
+  const size_t size = (buffer_size == 0) ? KDefaultBufferSize : buffer_size;
+  buffer_ = new unsigned char[size];
+  buffer_size_ = size;
+  TCP_DEBUG_PRINT("Buffer allocated with size: " << size);
 }
 
 /// @brief Destructor of the class TCPServer
@@ -126,9 +128,23 @@ size_t TCPServer::Send(const size_t n_bytes = 0, const int flags = 0) {
   }
   const size_t bytes_to_send = (n_bytes == 0) ? buffer_size_ : std::min(n_bytes, buffer_size_);
 
-  ssize_t result = send(socket_fd_, buffer_, bytes_to_send, flags);
+  const ssize_t result = send(socket_fd_, buffer_, bytes_to_send, flags);
   if (result < 0) {
     throw(SendException(errno));
   }
   return static_cast<size_t>(result);
+}
+
+/// @brief Write n_bytes into to buffer, to a max of buffer_size_.
+///   Less safe method due the ext_buffer could be invalid or smaller than n_bytes.
+/// @param ext_buffer 
+/// @param n_bytes 
+/// @return the number of bytes writed.
+size_t TCPServer::WrtBuffer(void* ext_buffer, size_t n_bytes) {
+  if (ext_buffer == nullptr || buffer_ == nullptr || buffer_size_ == 0) {
+    return 0;
+  }
+  const size_t bytes_to_write = (n_bytes == 0) ? buffer_size_ : std::min(n_bytes, buffer_size_);
+  std::memcpy(buffer_, ext_buffer, bytes_to_write);
+  return bytes_to_write;
 }
