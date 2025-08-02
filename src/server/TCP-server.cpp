@@ -19,7 +19,7 @@
 #include "TCP-server.hpp"
 
 #ifdef DEBUG
-  #define TCP_DEBUG_PRINT(MESSAGE) std::cerr << "[!] " <<  MESSAGE << std::endl
+  #define TCP_DEBUG_PRINT(MESSAGE) std::cerr << "[!] " <<  MESSAGE << std::endl;
 #else
   #define TCP_DEBUG_PRINT(MESSAGE)
 #endif
@@ -39,7 +39,7 @@ TCPServer::TCPServer(const unsigned short port, const std::string& address, cons
   if (socket_fd_ < 0) {
     throw(InitializeSocketException(errno));
   }
-  TCP_DEBUG_PRINT("Socket file descriptor initialized in: " << socket_fd_);
+  TCP_DEBUG_PRINT("Socket file descriptor initialized in: " << socket_fd_)
 
   // Initialize address
   memset(&addr_, 0, sizeof(addr_));
@@ -52,7 +52,7 @@ TCPServer::TCPServer(const unsigned short port, const std::string& address, cons
   send_buffer_ = new unsigned char[size];
   recv_buffer_ = new unsigned char[size];
   buffer_size_ = size;
-  TCP_DEBUG_PRINT("Buffer allocated with size: " << size);
+  TCP_DEBUG_PRINT("Buffer allocated with size: " << size)
 }
 
 /// @brief Destructor of the class TCPServer
@@ -73,14 +73,14 @@ void TCPServer::Initialize() {
   if (bind(socket_fd_, aux_pointer, aux_size) < 0) {
     throw(BindingException(errno));
   }
-  TCP_DEBUG_PRINT("Socket bound to address: " << addr_.sin_addr.s_addr);
-  TCP_DEBUG_PRINT("Socket bound to port: " << ntohs(addr_.sin_port));
+  TCP_DEBUG_PRINT("Socket bound to address: " << addr_.sin_addr.s_addr)
+  TCP_DEBUG_PRINT("Socket bound to port: " << ntohs(addr_.sin_port))
 
   // Set the socket to passive mode.
   if (listen(socket_fd_, KMaxConnections) < 0) {
     throw(ListeningException(errno));
   }
-  TCP_DEBUG_PRINT("Socket set to passive mode with: " << KMaxConnections << " connections");
+  TCP_DEBUG_PRINT("Socket set to passive mode with: " << KMaxConnections << " connections")
 }
 
 
@@ -96,7 +96,7 @@ sockaddr_in TCPServer::Accept() {
     throw(AcceptException(errno)); 
   }
 
-  TCP_DEBUG_PRINT("Accepted connection request from client with address: " << ntohl(client.sin_addr.s_addr));
+  TCP_DEBUG_PRINT("Accepted connection request from client with address: " << ntohl(client.sin_addr.s_addr))
   return client;
  }
 
