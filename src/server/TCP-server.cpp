@@ -149,3 +149,13 @@ size_t TCPServer::Send(const size_t n_bytes, const int flags) {
   }
   return static_cast<size_t>(result);
 }
+
+size_t TCPServer::Recv(const size_t n_bytes, const int flags) {
+  const size_t bytes_to_recv = (n_bytes == 0) ? buffer_size_ : std::min(buffer_size_, n_bytes);
+  TCP_DEBUG_PRINT("Number of bytes to recover: " << bytes_to_recv)
+  ssize_t result = recv(socket_fd_, recv_buffer_, bytes_to_recv, flags);
+  if (result < 0) {
+    throw(RecvException(errno));
+  }
+  return static_cast<size_t>(result);
+}
