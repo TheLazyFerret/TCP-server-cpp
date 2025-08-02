@@ -33,7 +33,7 @@ constexpr size_t KDefaultBufferSize = 100;
 /// @param address 
 /// @param buffer_size
 TCPServer::TCPServer(const unsigned short port, const std::string& address, const size_t buffer_size) 
-: buffer_(nullptr), buffer_size_(0) {
+: send_buffer_(nullptr), recv_buffer_(nullptr), buffer_size_(0) {
   // Initialize socket
   socket_fd_ = socket(AF_INET, SOCK_STREAM, 0);
   if (socket_fd_ < 0) {
@@ -49,7 +49,8 @@ TCPServer::TCPServer(const unsigned short port, const std::string& address, cons
 
   // Initialize buffer
   const size_t size = (buffer_size == 0) ? KDefaultBufferSize : buffer_size;
-  buffer_ = new unsigned char[size];
+  send_buffer_ = new unsigned char[size];
+  recv_buffer_ = new unsigned char[size];
   buffer_size_ = size;
   TCP_DEBUG_PRINT("Buffer allocated with size: " << size);
 }
@@ -57,8 +58,10 @@ TCPServer::TCPServer(const unsigned short port, const std::string& address, cons
 /// @brief Destructor of the class TCPServer
 TCPServer::~TCPServer() {
   Kill();
-  delete[] buffer_;
-  buffer_ = nullptr;
+  delete[] send_buffer_;
+  send_buffer_ = nullptr;
+  delete[] recv_buffer_;
+  recv_buffer_ = nullptr;
   buffer_size_ = 0;
 }
 
@@ -117,27 +120,32 @@ in_addr TCPServer::ConvertAddrBinary(const std::string& address) {
   return addr;
 }
 
+/// @brief Set the send buffer.
+///   Choose the smallest between buffer_size_ and n_bytes. if n_bytes == 0, uses buffer_size_
+/// @param ext 
+/// @param n_bytes 
+/// @return 
+size_t TCPServer::SetBuffer(const void* ext, const size_t n_bytes) noexcept {
+  if (ext == nullptr) {
+    return 0;
+  }
+  const size_t bytes_to_copy = (n_bytes == 0) ? buffer_size_ : std::min(n_bytes, buffer_size_);
+  TCP_DEBUG_PRINT("Number of bytes to copy: " << bytes_to_copy)
+  
+  std::memcpy(send_buffer_, ext, bytes_to_copy);
+  return bytes_to_copy;
+}
+
 /// @brief Safe send() implementation.
 /// @param n_bytes 
 /// @param flags 
 /// @return the number of bytes sent.
-size_t TCPServer::Send(void* ext_buffer, const size_t n_bytes, const int flags) {
-  const ssize_t result = send(socket_fd_, ext_buffer, n_bytes, flags);
+size_t TCPServer::Send(const size_t n_bytes, const int flags) {
+  const size_t bytes_to_send = (n_bytes == 0) ? buffer_size_ : std::min(buffer_size_, n_bytes);
+  TCP_DEBUG_PRINT("Number of bytes to send: " << bytes_to_send)
+  ssize_t result = send(socket_fd_, send_buffer_, bytes_to_send, flags);
   if (result < 0) {
     throw(SendException(errno));
   }
-  TCP_DEBUG_PRINT("Sent: " << n_bytes)
-  return static_cast<size_t>(result);
-}
-
-/// @brief Recover the message from the socket and save it in the internal buffer.
-/// @param flags 
-/// @return the number of bytes read.
-size_t TCPServer::Recv(const int flags) {
-  const ssize_t result = recv(socket_fd_, buffer_, buffer_size_, flags);
-  if (result < 0) {
-    throw(RecvException(errno));
-  }
-  TCP_DEBUG_PRINT("read from socket")
   return static_cast<size_t>(result);
 }
