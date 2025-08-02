@@ -35,8 +35,8 @@ class TCPServer {
     void Initialize();
     sockaddr_in Accept();
     size_t Send(void* ext_buffer, const size_t n_bytes, const int flags = 0);
+    size_t Recv(const int flags = 0);
     void Kill() noexcept;
-
 
   private:
     // Private methods
@@ -89,10 +89,16 @@ class AcceptException : public TCPServerException {
     AcceptException(const int error_code) : TCPServerException(std::string(strerror(error_code))) {}
 };
 
-/// @brief Represents an error sending information.
+/// @brief Represents an error sending the message.
 class SendException : public TCPServerException {
   public:
     SendException(const int error_code) : TCPServerException(std::string(strerror(error_code))) {}
+};
+
+/// @brief Represents an error recovering the message.
+class RecvException : public TCPServerException {
+  public:
+    RecvException(const int error_code) : TCPServerException(std::string(strerror(error_code))) {}
 };
 
 #endif

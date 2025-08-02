@@ -129,3 +129,15 @@ size_t TCPServer::Send(void* ext_buffer, const size_t n_bytes, const int flags) 
   TCP_DEBUG_PRINT("Sent: " << n_bytes)
   return static_cast<size_t>(result);
 }
+
+/// @brief Recover the message from the socket and save it in the internal buffer.
+/// @param flags 
+/// @return the number of bytes readed.
+size_t TCPServer::Recv(const int flags) {
+  const ssize_t result = recv(socket_fd_, buffer_, buffer_size_, flags);
+  if (result < 0) {
+    throw(RecvException(errno));
+  }
+  TCP_DEBUG_PRINT("Readed from socket")
+  return static_cast<size_t>(result);
+}
