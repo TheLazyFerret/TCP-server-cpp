@@ -24,7 +24,7 @@
   #define TCP_DEBUG_PRINT(MESSAGE)
 #endif
 
-/// @brief Set the max ammount of connection the socket will accept.
+/// @brief Set the max amount of connection the socket will accept.
 constexpr int KMaxConnections = 2;
 constexpr size_t KDefaultBufferSize = 100;
 
@@ -70,8 +70,8 @@ void TCPServer::Initialize() {
   if (bind(socket_fd_, aux_pointer, aux_size) < 0) {
     throw(BindingException(errno));
   }
-  TCP_DEBUG_PRINT("Socket binded to address: " << addr_.sin_addr.s_addr);
-  TCP_DEBUG_PRINT("Socket binded to port: " << ntohs(addr_.sin_port));
+  TCP_DEBUG_PRINT("Socket bound to address: " << addr_.sin_addr.s_addr);
+  TCP_DEBUG_PRINT("Socket bound to port: " << ntohs(addr_.sin_port));
 
   // Set the socket to passive mode.
   if (listen(socket_fd_, KMaxConnections) < 0) {
@@ -81,7 +81,7 @@ void TCPServer::Initialize() {
 }
 
 
-/// @brief Calls the subrutine "Accept()" and waiting untils a client request.
+/// @brief Calls the subrutine "Accept()" and waiting until a client request.
 /// @return The addr of the client.
 sockaddr_in TCPServer::Accept() {
   sockaddr_in client;
@@ -132,12 +132,12 @@ size_t TCPServer::Send(void* ext_buffer, const size_t n_bytes, const int flags) 
 
 /// @brief Recover the message from the socket and save it in the internal buffer.
 /// @param flags 
-/// @return the number of bytes readed.
+/// @return the number of bytes read.
 size_t TCPServer::Recv(const int flags) {
   const ssize_t result = recv(socket_fd_, buffer_, buffer_size_, flags);
   if (result < 0) {
     throw(RecvException(errno));
   }
-  TCP_DEBUG_PRINT("Readed from socket")
+  TCP_DEBUG_PRINT("read from socket")
   return static_cast<size_t>(result);
 }
