@@ -102,28 +102,33 @@ void TCPServer::Kill() noexcept {
   }
 }
 
-/// @brief Send n_bytes to the socket
-/// @param n_bytes 
-/// @param flags 
-/// @return number of bytes sent
-size_t TCPServer::Send(const size_t n_bytes = 0, const int flags = 0) {
-  if (n_bytes > buffer_size_) {
-    TCP_DEBUG_PRINT("Trying to send more bytes than buffer size, using the default value: " << buffer_size_);
-  }
-  const size_t bytes_to_send = (n_bytes == 0) ? buffer_size_ : std::min(buffer_size_, n_bytes);
-
-  return 0;
-}
-
 /// @brief Converts a IPv4 number and dots notation into binary
 /// @param address 
-/// @return 
+/// @return the IPv4 in binary.
 in_addr TCPServer::ConvertAddrBinary(const std::string& address) {
   in_addr addr;
   if (inet_aton(address.c_str(), &addr) < 0) {
     throw(ConvertBinaryAddrException(errno));
   }
 
-  TCP_DEBUG_PRINT("Address converted from: " << address << " to: " << addr.s_addr);
+
+  TCP_DEBUG_PRINT("Address converted from: " << address << " to: " << addr.s_addr)
   return addr;
+}
+
+/// @brief Safe send() implementation.
+/// @param n_bytes 
+/// @param flags 
+/// @return the number of bytes sent.
+size_t TCPServer::Send(const size_t n_bytes = 0, const int flags = 0) {
+  if (n_bytes > buffer_size_) {
+    TCP_DEBUG_PRINT("Trying to send more bytes than buffer size. Using buffer size")
+  }
+  const size_t bytes_to_send = (n_bytes == 0) ? buffer_size_ : std::min(n_bytes, buffer_size_);
+
+  ssize_t result = send(socket_fd_, buffer_, bytes_to_send, flags);
+  if (result < 0) {
+    throw(SendException(errno));
+  }
+  return static_cast<size_t>(result);
 }
