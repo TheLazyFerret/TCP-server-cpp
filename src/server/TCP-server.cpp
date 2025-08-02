@@ -19,9 +19,9 @@
 #include "TCP-server.hpp"
 
 #ifdef DEBUG
-  #define DEBUG_PRINT(MESSAGE) std::cerr << "[!] " <<  MESSAGE << std::endl
+  #define TCP_DEBUG_PRINT(MESSAGE) std::cerr << "[!] " <<  MESSAGE << std::endl
 #else
-  #define DEBUG_PRINT(MESSAGE)
+  #define TCP_DEBUG_PRINT(MESSAGE)
 #endif
 
 /// @brief Set the max ammount of connection the socket will accept.
@@ -37,7 +37,7 @@ TCPServer::TCPServer(const unsigned short port, const std::string& address, cons
   if (socket_fd_ < 0) {
     throw(InitializeSocketException(errno));
   }
-  DEBUG_PRINT("Socket file descriptor initialized in: " << socket_fd_);
+  TCP_DEBUG_PRINT("Socket file descriptor initialized in: " << socket_fd_);
 
   // Initialize address
   memset(&addr_, 0, sizeof(addr_));
@@ -48,7 +48,7 @@ TCPServer::TCPServer(const unsigned short port, const std::string& address, cons
   // Initialize buffer
   buffer_ = new unsigned char[buffer_size];
   buffer_size_ = buffer_size;
-  DEBUG_PRINT("Buffer allocated with size: " << buffer_size_);
+  TCP_DEBUG_PRINT("Buffer allocated with size: " << buffer_size_);
 }
 
 /// @brief Destructor of the class TCPServer
@@ -67,14 +67,14 @@ void TCPServer::Initialize() {
   if (bind(socket_fd_, aux_pointer, aux_size) < 0) {
     throw(BindingException(errno));
   }
-  DEBUG_PRINT("Socket binded to address: " << addr_.sin_addr.s_addr);
-  DEBUG_PRINT("Socket binded to port: " << ntohs(addr_.sin_port));
+  TCP_DEBUG_PRINT("Socket binded to address: " << addr_.sin_addr.s_addr);
+  TCP_DEBUG_PRINT("Socket binded to port: " << ntohs(addr_.sin_port));
 
   // Set the socket to passive mode.
   if (listen(socket_fd_, KMaxConnections) < 0) {
     throw(ListeningException(errno));
   }
-  DEBUG_PRINT("Socket set to passive mode with: " << KMaxConnections << " connections");
+  TCP_DEBUG_PRINT("Socket set to passive mode with: " << KMaxConnections << " connections");
 }
 
 
@@ -90,7 +90,7 @@ sockaddr_in TCPServer::Accept() {
     throw(AcceptException(errno)); 
   }
 
-  DEBUG_PRINT("Accepted connection request from client with address: " << ntohl(client.sin_addr.s_addr));
+  TCP_DEBUG_PRINT("Accepted connection request from client with address: " << ntohl(client.sin_addr.s_addr));
   return client;
  }
 
@@ -108,7 +108,7 @@ void TCPServer::Kill() noexcept {
 /// @return number of bytes sent
 size_t TCPServer::Send(const size_t n_bytes = 0, const int flags = 0) {
   if (n_bytes > buffer_size_) {
-    DEBUG_PRINT("Trying to send more bytes than buffer size, using the default value: " << buffer_size_);
+    TCP_DEBUG_PRINT("Trying to send more bytes than buffer size, using the default value: " << buffer_size_);
   }
   const size_t bytes_to_send = (n_bytes == 0) ? buffer_size_ : std::min(buffer_size_, n_bytes);
 
@@ -124,6 +124,6 @@ in_addr TCPServer::ConvertAddrBinary(const std::string& address) {
     throw(ConvertBinaryAddrException(errno));
   }
 
-  DEBUG_PRINT("Address converted from: " << address << " to: " << addr.s_addr);
+  TCP_DEBUG_PRINT("Address converted from: " << address << " to: " << addr.s_addr);
   return addr;
 }
