@@ -44,7 +44,7 @@ TCPServer::~TCPServer() {
   try {
     Kill();
   } catch(const TCPServerException& e) {
-    DEBUG_PRINT("ERROR CALLING KILL: " << e.what());
+    DEBUG_PRINT("Error calling Kill(): " << e.what());
   } 
 }
 
@@ -136,6 +136,13 @@ void TCPServer::SetPassive(const int backlog) {
   DEBUG_PRINT("Socket set to passive mode with backlog size: " << effective_backlog);
 }
 
+///
+///
+///
+///
+///
+
+
 /// @brief Call accept() and instance a new object TCPConnection
 ///   This is the only method for instance this class.
 /// @param buffer_size 
@@ -189,9 +196,13 @@ TCPConnection& TCPConnection::operator=(TCPConnection&& aux) {
 /// @param s 
 /// @param source 
 void TCPConnection::Move(TCPConnection& s, TCPConnection& source) noexcept {
+  if (&s == &source) {
+    return;
+  }
   // Clean old state
   if (s.send_buffer_ != nullptr) delete[] s.send_buffer_;
   if (s.recv_buffer_ != nullptr) delete[] s.recv_buffer_;
+  if (s.initialized_) s.Kill();
   // Move the data
   s.socket_fd_ = source.socket_fd_;
   s.addr_ = source.addr_;
@@ -206,4 +217,30 @@ void TCPConnection::Move(TCPConnection& s, TCPConnection& source) noexcept {
   source.recv_buffer_ = nullptr;
   source.buffer_size_ = 0;
   source.initialized_ = false;
+}
+
+/// @brief Close the connection.
+void TCPConnection::Kill() {
+  if (!initialized_) return;
+  const int temp_socket_fd = socket_fd_;
+  socket_fd_ = -1;
+  initialized_ = false;
+  if (close(temp_socket_fd) < 0) {
+    throw ErrnoException(errno);
+  }
+  DEBUG_PRINT("Socket closed");
+}
+
+/// @brief Destructor of the class TCPConnection.
+TCPConnection::~TCPConnection() {
+  try {
+    Kill();
+  } catch(const TCPServerException& e) {
+    DEBUG_PRINT("Error calling Kill(): " << e.what());
+  }
+  if (send_buffer_ != nullptr) delete[] send_buffer_;
+  send_buffer_ = nullptr;
+  if (recv_buffer_ != nullptr) delete[] recv_buffer_;
+  recv_buffer_ = nullptr;
+  buffer_size_ = 0;
 }
