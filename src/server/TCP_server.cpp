@@ -53,7 +53,10 @@ TCPServer::~TCPServer() {
 ///   If it is already initialized, doesn't do anything.
 /// @param backlog 
 void TCPServer::Initialize(const int backlog) {
-  if (initialized_) return;
+  if (initialized_) {
+    DEBUG_PRINT("Already initialized");
+    return;
+  }
   // Initialize the socket file descriptor.
   InitializeSocket();
   // Bind the socket to the address and port.
@@ -96,8 +99,11 @@ std::string TCPServer::ConvertAddrString(const in_addr& address) {
 
 /// @brief Close the socket. 
 ///   If it is already closed, doesn't do anything.
+///   Can throw an exception if the Server is not initialized.
 void TCPServer::Kill() {
-  if (!initialized_) return;
+  if (!initialized_) {
+    throw NotInitialized();
+  }
   const int temp_socket_fd = socket_fd_;
   socket_fd_ = -1;
   initialized_ = false;
@@ -134,4 +140,29 @@ void TCPServer::SetPassive(const int backlog) {
     throw ErrnoException(errno);
   }
   DEBUG_PRINT("Socket set to passive mode with backlog size: " << effective_backlog);
+}
+
+/// @brief Call accept() and instance a new object TCPConnection
+///   This is the only method for instance this class.
+///   Can throw an exception if the server is not initialized.
+/// @param buffer_size 
+/// @return a new instance of TCPConnection.
+TCPConnection TCPServer::Accept(const size_t buffer_size) const {
+  if (!initialized_) {
+    throw NotInitialized();
+  }
+  // Main variables
+  sockaddr_in client_addr;
+  memset(&client_addr, 0, sizeof(client_addr));
+  socklen_t client_addr_len = static_cast<socklen_t>(sizeof(client_addr));
+  // Auxiliar pointers
+  sockaddr* client_addr_aux = reinterpret_cast<sockaddr*>(&client_addr);
+  socklen_t* client_addr_len_aux = &client_addr_len;
+  // Listen call
+  const int client_socket = accept(socket_fd_, client_addr_aux, client_addr_len_aux);
+  if (client_socket < 0) {
+    throw ErrnoException(errno);
+  }
+  DEBUG_PRINT("Accepted conection from: " << ConvertAddrString(client_addr.sin_addr));
+  return TCPConnection(client_socket, client_addr, buffer_size);
 }

@@ -33,8 +33,11 @@ class TCPServer {
  
     // Normal methods
     void Initialize(const int backlog = 0);
+    
     void Kill();
     TCPConnection Accept(const size_t buffer_size = 0) const;
+
+    inline bool IsInitialized() const noexcept {return initialized_;}
 
   private:
     // Private methods
@@ -66,6 +69,8 @@ class TCPConnection {
 
     // normal methods
     void Kill();
+    inline bool IsInitialized() const noexcept {return initialized_;}
+    void Send(const void* src, const size_t len) const;
   
   private:
     // Private methods
@@ -101,6 +106,12 @@ class ErrnoException : public TCPServerException {
 class ConvertBinaryException : public TCPServerException {
   public:
     ConvertBinaryException(const std::string& address) : TCPServerException("Invalid address: " + address) {}
+};
+
+/// @brief Exception representing situations where trying to access a recurse while object not initialized correctly
+class NotInitialized : public TCPServerException {
+  public:
+    NotInitialized() : TCPServerException("Trying to access a method while object not correctly initialized") {}
 };
 
 #endif
