@@ -19,7 +19,7 @@
 #include "TCP_server.hpp"
 
 #ifdef DEBUG
-  #define DEBUG_PRINT(MESSAGE) std::cerr << "[CLIENT] " <<  MESSAGE << std::endl
+  #define DEBUG_PRINT(MESSAGE) std::cerr << "[CONNECTION] " <<  MESSAGE << std::endl
 #else
   #define DEBUG_PRINT(MESSAGE)
 #endif
