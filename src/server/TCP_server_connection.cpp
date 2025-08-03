@@ -54,8 +54,7 @@ TCPConnection TCPServer::Accept(const size_t buffer_size) const {
 TCPConnection::TCPConnection(const int socket_fd, const sockaddr_in& addr, const size_t buffer_size) 
   : socket_fd_(socket_fd), addr_(addr), initialized_(true) {
   buffer_size_ = (buffer_size == 0) ? Kdefault_buffer_ : buffer_size;
-  send_buffer_ = new unsigned char[buffer_size_];
-  recv_buffer_ = new unsigned char[buffer_size_];
+  buffer_ = new unsigned char[buffer_size_];
 }
 
 /// @brief Move assign.
@@ -81,21 +80,18 @@ void TCPConnection::Move(TCPConnection& s, TCPConnection& source) {
     return;
   }
   // Clean old state
-  if (s.send_buffer_ != nullptr) delete[] s.send_buffer_;
-  if (s.recv_buffer_ != nullptr) delete[] s.recv_buffer_;
+  if (s.buffer_ != nullptr) delete[] s.buffer_;
   if (s.initialized_) s.Kill();
   // Move the data
   s.socket_fd_ = source.socket_fd_;
   s.addr_ = source.addr_;
-  s.send_buffer_ = source.send_buffer_;
-  s.recv_buffer_ = source.recv_buffer_;
+  s.buffer_ = source.buffer_;
   s.buffer_size_ = source.buffer_size_;
   s.initialized_ = source.initialized_;
   // Erase old instance
   source.socket_fd_ = -1;
   memset(&source.addr_, 0, sizeof(source.addr_));
-  source.send_buffer_ = nullptr;
-  source.recv_buffer_ = nullptr;
+  source.buffer_ = nullptr;
   source.buffer_size_ = 0;
   source.initialized_ = false;
 }
@@ -119,9 +115,7 @@ TCPConnection::~TCPConnection() {
   } catch(const TCPServerException& e) {
     DEBUG_PRINT("Error calling Kill(): " << e.what());
   }
-  if (send_buffer_ != nullptr) delete[] send_buffer_;
-  send_buffer_ = nullptr;
-  if (recv_buffer_ != nullptr) delete[] recv_buffer_;
-  recv_buffer_ = nullptr;
+  if (buffer_ != nullptr) delete[] buffer_;
+  buffer_ = nullptr;
   buffer_size_ = 0;
 }

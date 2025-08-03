@@ -75,8 +75,7 @@ class TCPConnection {
     // Attributes
     int socket_fd_;
     sockaddr_in addr_;
-    unsigned char* send_buffer_;
-    unsigned char* recv_buffer_;
+    unsigned char* buffer_;
     size_t buffer_size_;
 
     bool initialized_;
