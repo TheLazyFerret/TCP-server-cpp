@@ -17,6 +17,7 @@
 
 class TCPConnection;
 
+/// @brief Abstraction class for managing server and create connections.
 class TCPServer {
   public:
     // Special methods
@@ -49,10 +50,11 @@ class TCPServer {
     static constexpr int Kdefault_backlog_ = 5;
 };
 
+/// @brief Abstraction class for managing connections.
 class TCPConnection {
+  friend TCPServer;
   public:
     // Special methods
-    friend TCPServer;
     TCPConnection() = delete;
     TCPConnection(const TCPConnection&) = delete;
     TCPConnection& operator=(const TCPConnection&) = delete;
