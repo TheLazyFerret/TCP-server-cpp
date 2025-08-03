@@ -14,11 +14,12 @@
 
 #include <exception>
 #include <string>
-#include <cstring>
+
+class TCPConnection;
 
 class TCPServer {
   public:
-    // SPECIAL METHODS
+    // Special methods
     TCPServer() = delete;
     TCPServer(const TCPServer&) = delete;
     TCPServer& operator=(const TCPServer&) = delete;
@@ -28,23 +29,53 @@ class TCPServer {
     TCPServer(const unsigned short port, const std::string& address);
     ~TCPServer();
  
-    // NORMAL METHODS
+    // Normal methods
     void Initialize(const int backlog = 0);
     void Kill();
+    TCPConnection Accept(const size_t buffer_size = 0) const;
 
   private:
-    // PRIVATE METHODS
-    in_addr ConvertAddrBinary(const std::string& address);
+    // Private methods
+    static in_addr ConvertAddrBinary(const std::string& address);
+    static std::string ConvertAddrString(const in_addr& address);
     void InitializeSocket();
     void BindSocket();
     void SetPassive(const int backlog);
 
-    // ATTRIBUTES
+    // Attributes
     int socket_fd_;
     sockaddr_in socket_addr_;
     bool initialized_;
+    static constexpr int Kdefault_backlog_ = 5;
+};
 
-    static constexpr int KDefault_Backlog = 5;
+class TCPConnection {
+  public:
+    // Special methods
+    friend TCPServer;
+    TCPConnection() = delete;
+    TCPConnection(const TCPConnection&) = delete;
+    TCPConnection& operator=(const TCPConnection&) = delete;
+
+    ~TCPConnection();
+    TCPConnection(TCPConnection&&);
+    TCPConnection& operator=(TCPConnection&&);
+
+    // normal methods
+  
+  private:
+    // Private methods
+    TCPConnection(const int socket_fd, const sockaddr_in& addr, const size_t buffer_size);
+
+    // Attributes
+    int socket_fd_;
+    sockaddr_in addr_;
+    unsigned char* send_buffer_;
+    unsigned char* recv_buffer_;
+    size_t buffer_size_;
+
+    bool initialized_;
+    static constexpr size_t Kdefault_buffer_ = 100;
 };
 
 /// @brief Base class for representing all the exceptions of the class TCPServer.

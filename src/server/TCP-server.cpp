@@ -69,11 +69,29 @@ void TCPServer::Initialize(const int backlog) {
 /// @return The address in binary.
 in_addr TCPServer::ConvertAddrBinary(const std::string& address) {
   in_addr addr;
-  if (inet_aton(address.c_str(), &addr) == 0) {
+  memset(&addr, 0, sizeof(addr));
+  const int result = inet_pton(AF_INET, address.c_str(), &addr);
+  if (result == 0) {
     throw ConvertBinaryException(address);
+  }
+  else if (result < 0) {
+    throw ErrnoException(errno);
   }
   DEBUG_PRINT("Address converted from: " << address << " to: " << ntohl(addr.s_addr));
   return addr;
+}
+
+/// @brief Convert a Binary address to a string format.
+/// @param address 
+/// @return The address as a string.
+std::string TCPServer::ConvertAddrString(const in_addr& address) {
+  char str[INET_ADDRSTRLEN];
+  if (inet_ntop(AF_INET, &address, str, INET_ADDRSTRLEN) == nullptr) {
+    throw ErrnoException(errno);
+  }
+  const std::string result(str);
+  DEBUG_PRINT("Address converted from: " << ntohl(address.s_addr) << " to: " << result);
+  return result;
 }
 
 /// @brief Close the socket. 
@@ -110,9 +128,43 @@ void TCPServer::BindSocket() {
 /// @brief Set the socket file descriptor to passive.
 /// @param backlog
 void TCPServer::SetPassive(const int backlog) {
-  const int effective_backlog = (backlog <= 0) ? KDefault_Backlog : backlog;
+  const int effective_backlog = (backlog <= 0) ? Kdefault_backlog_ : backlog;
   if (listen(socket_fd_, effective_backlog) < 0) {
     throw ErrnoException(errno);
   }
   DEBUG_PRINT("Socket set to passive mode with backlog size: " << effective_backlog);
+}
+
+/// @brief Call accept() and instance a new object TCPConnection
+///   This is the only method for instance this class.
+/// @param buffer_size 
+/// @return a new instance of TCPConnection.
+TCPConnection TCPServer::Accept(const size_t buffer_size) const {
+  // Main variables
+  sockaddr_in client_addr;
+  memset(&client_addr, 0, sizeof(client_addr));
+  socklen_t client_addr_len = static_cast<socklen_t>(sizeof(client_addr));
+  // Auxiliar pointers
+  sockaddr* client_addr_aux = reinterpret_cast<sockaddr*>(&client_addr);
+  socklen_t* client_addr_len_aux = &client_addr_len;
+  // Listen call
+  const int client_socket = accept(socket_fd_, client_addr_aux, client_addr_len_aux);
+  if (client_socket < 0) {
+    throw ErrnoException(errno);
+  }
+  DEBUG_PRINT("Accepted conexion from: " << ConvertAddrString(client_addr.sin_addr));
+  return TCPConnection(client_socket, client_addr, buffer_size);
+}
+
+/// @brief Private constructor of TCPConnection
+///   It is private due not intended to being called directly,
+///   but from a TCPServer::Accept()
+/// @param socket_fd 
+/// @param addr 
+/// @param buffer_size 
+TCPConnection::TCPConnection(const int socket_fd, const sockaddr_in& addr, const size_t buffer_size) 
+  : socket_fd_(socket_fd), addr_(addr), initialized_(true) {
+  buffer_size_ = (buffer_size == 0) ? Kdefault_buffer_ : buffer_size;
+  send_buffer_ = new unsigned char[buffer_size_];
+  recv_buffer_ = new unsigned char[buffer_size_];
 }
