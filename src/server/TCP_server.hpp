@@ -63,9 +63,9 @@ class TCPConnection {
     TCPConnection(const TCPConnection&) = delete;
     TCPConnection& operator=(const TCPConnection&) = delete;
 
-    ~TCPConnection();
     TCPConnection(TCPConnection&&) = default;
     TCPConnection& operator=(TCPConnection&&) = default;
+    ~TCPConnection();
 
     // normal methods
     void Kill();
@@ -109,6 +109,8 @@ class NotInitialized : public TCPServerException {
     NotInitialized() : TCPServerException("Trying to access a method while object not correctly initialized") {}
 };
 
+/// @brief Exception sent when a pointer is invalid.
+///   Basically trying to avoid a seg fault.
 class InvalidPointer : public TCPServerException {
   public:
     InvalidPointer() : TCPServerException("The pointer is invalid") {}
