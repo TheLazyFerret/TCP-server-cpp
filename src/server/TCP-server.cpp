@@ -195,7 +195,7 @@ TCPConnection& TCPConnection::operator=(TCPConnection&& aux) {
 ///   Also, first free the memory allocated by s.
 /// @param s 
 /// @param source 
-void TCPConnection::Move(TCPConnection& s, TCPConnection& source) noexcept {
+void TCPConnection::Move(TCPConnection& s, TCPConnection& source) {
   if (&s == &source) {
     return;
   }
