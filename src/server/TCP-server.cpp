@@ -41,7 +41,11 @@ TCPServer::TCPServer(const unsigned short port, const std::string& address) {
 
 /// @brief Destructor of TCPServer.
 TCPServer::~TCPServer() {
-  Kill();
+  try {
+    Kill();
+  } catch(const TCPServerException& e) {
+    DEBUG_PRINT("ERROR CALLING KILL: " << e.what());
+  } 
 }
 
 /// @brief Initialize the server.
