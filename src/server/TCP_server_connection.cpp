@@ -30,50 +30,8 @@
 /// @param socket_fd 
 /// @param addr 
 /// @param buffer_size 
-TCPConnection::TCPConnection(const int socket_fd, const sockaddr_in& addr, const size_t buffer_size) 
-  : socket_fd_(socket_fd), addr_(addr), initialized_(true) {
-  buffer_size_ = (buffer_size == 0) ? Kdefault_buffer_ : buffer_size;
-  buffer_ = new unsigned char[buffer_size_];
-}
-
-/// @brief Move assign.
-/// @param aux 
-TCPConnection::TCPConnection(TCPConnection&& aux) {
-  Move(*this, aux);
-}
-
-/// @brief Move operator.
-/// @param aux 
-/// @return a reference of the caller instance.
-TCPConnection& TCPConnection::operator=(TCPConnection&& aux) {
-  Move(*this, aux);
-  return *this;
-}
-
-/// @brief Move the resources of source to s. 
-///   Also, first free the memory allocated by s.
-/// @param s 
-/// @param source 
-void TCPConnection::Move(TCPConnection& s, TCPConnection& source) {
-  if (&s == &source) {
-    return;
-  }
-  // Clean old state
-  if (s.buffer_ != nullptr) delete[] s.buffer_;
-  if (s.initialized_) s.Kill();
-  // Move the data
-  s.socket_fd_ = source.socket_fd_;
-  s.addr_ = source.addr_;
-  s.buffer_ = source.buffer_;
-  s.buffer_size_ = source.buffer_size_;
-  s.initialized_ = source.initialized_;
-  // Erase old instance
-  source.socket_fd_ = -1;
-  memset(&source.addr_, 0, sizeof(source.addr_));
-  source.buffer_ = nullptr;
-  source.buffer_size_ = 0;
-  source.initialized_ = false;
-}
+TCPConnection::TCPConnection(const int socket_fd, const sockaddr_in& addr) 
+: socket_fd_(socket_fd), addr_(addr), initialized_(true) {}
 
 /// @brief Close the connection.
 void TCPConnection::Kill() {
@@ -94,7 +52,11 @@ TCPConnection::~TCPConnection() {
   } catch(const TCPServerException& e) {
     DEBUG_PRINT("Error calling Kill(): " << e.what());
   }
-  if (buffer_ != nullptr) delete[] buffer_;
-  buffer_ = nullptr;
-  buffer_size_ = 0;
+}
+
+/// @brief Send 
+/// @param src 
+/// @param len 
+void TCPConnection::Send(const void* src, const size_t len, const int flags) const {
+
 }

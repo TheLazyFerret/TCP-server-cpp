@@ -33,7 +33,7 @@ class TCPServer {
  
     // Normal methods
     void Initialize(const int backlog = 0);
-    
+
     void Kill();
     TCPConnection Accept(const size_t buffer_size = 0) const;
 
@@ -64,27 +64,22 @@ class TCPConnection {
     TCPConnection& operator=(const TCPConnection&) = delete;
 
     ~TCPConnection();
-    TCPConnection(TCPConnection&&);
-    TCPConnection& operator=(TCPConnection&&);
+    TCPConnection(TCPConnection&&) = default;
+    TCPConnection& operator=(TCPConnection&&) = default;
 
     // normal methods
     void Kill();
     inline bool IsInitialized() const noexcept {return initialized_;}
-    void Send(const void* src, const size_t len) const;
+    void Send(const void* src, const size_t len, const int flags = 0) const;
   
   private:
     // Private methods
-    static void Move(TCPConnection& s, TCPConnection& source);
-    TCPConnection(const int socket_fd, const sockaddr_in& addr, const size_t buffer_size);
+    TCPConnection(const int socket_fd, const sockaddr_in& addr);
 
     // Attributes
     int socket_fd_;
     sockaddr_in addr_;
-    unsigned char* buffer_;
-    size_t buffer_size_;
-
     bool initialized_;
-    static constexpr size_t Kdefault_buffer_ = 100;
 };
 
 /// @brief Base class for representing all the exceptions of the class TCPServer.
