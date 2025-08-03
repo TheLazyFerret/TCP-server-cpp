@@ -9,14 +9,15 @@
 
 #include <iostream>
 
-#include "TCP-server.hpp"
+#include "TCP_server.hpp"
 
 int main(void) {
-  TCPServer server(5000, "127.0.0.1", 100);
+  TCPServer server(5000, "127.0.0.1");
   server.Initialize();
+  TCPConnection client = server.Accept();
 
-  auto aux = server.Accept();
-  std::cout << "cliente conectado desde: " << ntohl(aux.sin_addr.s_addr) << std::endl;
+  server.Kill();
+  client.Kill();
 
   return 0;
 }
