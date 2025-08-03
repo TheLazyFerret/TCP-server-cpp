@@ -65,7 +65,7 @@ class ErrnoException : public TCPServerException {
 /// @brief Exception called when tried to convert an invalid address.
 class ConvertBinaryException : public TCPServerException {
   public:
-    ConvertBinaryException() : TCPServerException("Bad address") {}
+    ConvertBinaryException(const std::string& address) : TCPServerException("Invalid address: " + address) {}
 };
 
 #endif

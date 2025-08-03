@@ -70,7 +70,7 @@ void TCPServer::Initialize(const int backlog) {
 in_addr TCPServer::ConvertAddrBinary(const std::string& address) {
   in_addr addr;
   if (inet_aton(address.c_str(), &addr) == 0) {
-    throw ConvertBinaryException();
+    throw ConvertBinaryException(address);
   }
   DEBUG_PRINT("Address converted from: " << address << " to: " << ntohl(addr.s_addr));
   return addr;
@@ -110,9 +110,9 @@ void TCPServer::BindSocket() {
 /// @brief Set the socket file descriptor to passive.
 /// @param backlog
 void TCPServer::SetPassive(const int backlog) {
-  const int effect_backlog = (backlog <= 0) ? KDefault_Backlog : backlog;
-  if (listen(socket_fd_, effect_backlog) < 0) {
+  const int effective_backlog = (backlog <= 0) ? KDefault_Backlog : backlog;
+  if (listen(socket_fd_, effective_backlog) < 0) {
     throw ErrnoException(errno);
   }
-  DEBUG_PRINT("Socket set to passive mode with backlog size: " << effect_backlog);
+  DEBUG_PRINT("Socket set to passive mode with backlog size: " << effective_backlog);
 }
