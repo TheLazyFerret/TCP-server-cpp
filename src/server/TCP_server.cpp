@@ -19,7 +19,7 @@
 #include "TCP_server.hpp"
 
 #ifdef DEBUG
-  #define DEBUG_PRINT(MESSAGE) std::cerr << "[+] " <<  MESSAGE << std::endl
+  #define DEBUG_PRINT(MESSAGE) std::cerr << "[SERVER] " <<  MESSAGE << std::endl
 #else
   #define DEBUG_PRINT(MESSAGE)
 #endif
@@ -77,7 +77,7 @@ in_addr TCPServer::ConvertAddrBinary(const std::string& address) {
   else if (result < 0) {
     throw ErrnoException(errno);
   }
-  DEBUG_PRINT("Address converted from: " << address << " to: " << ntohl(addr.s_addr));
+  //DEBUG_PRINT("Address converted from: " << address << " to: " << ntohl(addr.s_addr));
   return addr;
 }
 
@@ -90,7 +90,7 @@ std::string TCPServer::ConvertAddrString(const in_addr& address) {
     throw ErrnoException(errno);
   }
   const std::string result(str);
-  DEBUG_PRINT("Address converted from: " << ntohl(address.s_addr) << " to: " << result);
+  //DEBUG_PRINT("Address converted from: " << ntohl(address.s_addr) << " to: " << result);
   return result;
 }
 

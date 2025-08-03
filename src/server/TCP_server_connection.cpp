@@ -19,7 +19,7 @@
 #include "TCP_server.hpp"
 
 #ifdef DEBUG
-  #define DEBUG_PRINT(MESSAGE) std::cerr << "[+] " <<  MESSAGE << std::endl
+  #define DEBUG_PRINT(MESSAGE) std::cerr << "[CLIENT] " <<  MESSAGE << std::endl
 #else
   #define DEBUG_PRINT(MESSAGE)
 #endif
@@ -41,7 +41,7 @@ TCPConnection TCPServer::Accept(const size_t buffer_size) const {
   if (client_socket < 0) {
     throw ErrnoException(errno);
   }
-  DEBUG_PRINT("Accepted conexion from: " << ConvertAddrString(client_addr.sin_addr));
+  DEBUG_PRINT("Accepted conection from: " << ConvertAddrString(client_addr.sin_addr));
   return TCPConnection(client_socket, client_addr, buffer_size);
 }
 
