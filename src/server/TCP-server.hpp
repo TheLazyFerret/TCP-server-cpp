@@ -29,12 +29,32 @@ class TCPServer {
     ~TCPServer();
  
     // NORMAL METHODS
+    void Initialize(const int backlog = 0);
 
   private:
     // PRIVATE METHODS
+    in_addr ConvertAddrBinary(const std::string& address);
 
     // ATTRIBUTES
+    int socket_fd_;
+    sockaddr_in socket_addr_;
+    bool initialized_;
+    
+};
 
+/// @brief Base class for representing all the exceptions of the class TCPServer.
+class TCPServerException : public std::exception {
+  public:
+    TCPServerException(const std::string& message) : error_(message) {}
+    const char* what() const noexcept override {return error_.c_str();}
+  private:
+    std::string error_;
+};
+
+/// @brief Meta exception, that represents all error where errno is present.
+class ErrnoException : public TCPServerException {
+  public: 
+    ErrnoException(const int error_code) : TCPServerException(std::string(std::strerror(error_code))) {}
 };
 
 #endif
