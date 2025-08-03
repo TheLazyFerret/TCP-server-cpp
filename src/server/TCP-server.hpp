@@ -43,7 +43,8 @@ class TCPServer {
     int socket_fd_;
     sockaddr_in socket_addr_;
     bool initialized_;
-    
+
+    static constexpr int KDefault_Backlog = 5;
 };
 
 /// @brief Base class for representing all the exceptions of the class TCPServer.

@@ -24,8 +24,6 @@
   #define DEBUG_PRINT(MESSAGE)
 #endif
 
-constexpr int KDefault_Backlog = 5;
-
 /// @brief Constructor of TCPServer.
 /// @param port 
 /// @param address 
