@@ -33,6 +33,15 @@
 TCPConnection::TCPConnection(const int socket_fd, const sockaddr_in& addr) 
 : socket_fd_(socket_fd), addr_(addr), initialized_(true) {}
 
+/// @brief Destructor of the class TCPConnection.
+TCPConnection::~TCPConnection() {
+  try {
+    Kill();
+  } catch(const TCPServerException& e) {
+    DEBUG_PRINT("Error calling Kill(): " << e.what());
+  }
+}
+
 /// @brief Close the connection.
 void TCPConnection::Kill() {
   if (!initialized_) return;
@@ -45,18 +54,17 @@ void TCPConnection::Kill() {
   DEBUG_PRINT("Socket closed");
 }
 
-/// @brief Destructor of the class TCPConnection.
-TCPConnection::~TCPConnection() {
-  try {
-    Kill();
-  } catch(const TCPServerException& e) {
-    DEBUG_PRINT("Error calling Kill(): " << e.what());
-  }
-}
-
-/// @brief Send 
+/// @brief Send a len ammount of bytes from src.
 /// @param src 
-/// @param len 
-void TCPConnection::Send(const void* src, const size_t len, const int flags) const {
-
+/// @param len
+/// @return the number of bytes sent
+size_t TCPConnection::Send(const void* src, const size_t len, const int flags) const {
+  if (src == nullptr) {
+    throw InvalidPointer();
+  }
+  const ssize_t result = send(socket_fd_, src, len, flags);
+  if (result < 0) {
+    throw ErrnoException(errno);
+  }
+  return static_cast<size_t>(result);
 }

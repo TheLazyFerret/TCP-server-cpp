@@ -164,5 +164,5 @@ TCPConnection TCPServer::Accept(const size_t buffer_size) const {
     throw ErrnoException(errno);
   }
   DEBUG_PRINT("Accepted conection from: " << ConvertAddrString(client_addr.sin_addr));
-  return TCPConnection(client_socket, client_addr, buffer_size);
+  return TCPConnection(client_socket, client_addr);
 }

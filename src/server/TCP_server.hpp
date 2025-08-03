@@ -70,7 +70,7 @@ class TCPConnection {
     // normal methods
     void Kill();
     inline bool IsInitialized() const noexcept {return initialized_;}
-    void Send(const void* src, const size_t len, const int flags = 0) const;
+    size_t Send(const void* src, const size_t len, const int flags = 0) const;
   
   private:
     // Private methods
@@ -107,6 +107,11 @@ class ConvertBinaryException : public TCPServerException {
 class NotInitialized : public TCPServerException {
   public:
     NotInitialized() : TCPServerException("Trying to access a method while object not correctly initialized") {}
+};
+
+class InvalidPointer : public TCPServerException {
+  public:
+    InvalidPointer() : TCPServerException("The pointer is invalid") {}
 };
 
 #endif
