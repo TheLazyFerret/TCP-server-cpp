@@ -104,6 +104,7 @@ void TCPServer::Kill() {
   if (close(temp_socket_fd) < 0) {
     throw ErrnoException(errno);
   }
+  DEBUG_PRINT("Socket closed");
 }
 
 /// @brief Initialize the socket file descriptor.
@@ -169,15 +170,24 @@ TCPConnection::TCPConnection(const int socket_fd, const sockaddr_in& addr, const
   recv_buffer_ = new unsigned char[buffer_size_];
 }
 
+/// @brief Move assign.
+/// @param aux 
 TCPConnection::TCPConnection(TCPConnection&& aux) {
   Move(*this, aux);
 }
 
+/// @brief Move operator.
+/// @param aux 
+/// @return a reference of the caller instance.
 TCPConnection& TCPConnection::operator=(TCPConnection&& aux) {
   Move(*this, aux);
   return *this;
 }
 
+/// @brief Move the resources of source to s. 
+///   Also, first free the memory allocated by s.
+/// @param s 
+/// @param source 
 void TCPConnection::Move(TCPConnection& s, TCPConnection& source) noexcept {
   // Clean old state
   if (s.send_buffer_ != nullptr) delete[] s.send_buffer_;

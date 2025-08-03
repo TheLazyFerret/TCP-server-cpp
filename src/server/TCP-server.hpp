@@ -62,6 +62,7 @@ class TCPConnection {
     TCPConnection& operator=(TCPConnection&&);
 
     // normal methods
+    void Kill();
   
   private:
     // Private methods
