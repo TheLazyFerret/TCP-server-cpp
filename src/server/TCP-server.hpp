@@ -30,6 +30,7 @@ class TCPServer {
  
     // NORMAL METHODS
     void Initialize(const int backlog = 0);
+    void Kill();
 
   private:
     // PRIVATE METHODS
@@ -55,6 +56,12 @@ class TCPServerException : public std::exception {
 class ErrnoException : public TCPServerException {
   public: 
     ErrnoException(const int error_code) : TCPServerException(std::string(std::strerror(error_code))) {}
+};
+
+/// @brief Exception called when tried to convert an invalid address.
+class ConvertBinaryException : public TCPServerException {
+  public:
+    ConvertBinaryException() : TCPServerException("Bad address") {}
 };
 
 #endif

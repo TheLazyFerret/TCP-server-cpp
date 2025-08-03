@@ -43,8 +43,10 @@ TCPServer::TCPServer(const unsigned short port, const std::string& address) {
 
 /// @brief Initialize the server.
 ///   Create the socket file descriptor, bind to the address and set to passive mode.
+///   If it is already initialized, doesn't do anything.
 /// @param backlog 
 void TCPServer::Initialize(int backlog) {
+  if (initialized_) return;
   // Initialize socket file descriptor.
   socket_fd_ = socket(AF_INET, SOCK_STREAM, 0);
   if (socket_fd_ < 0) {
@@ -62,7 +64,7 @@ void TCPServer::Initialize(int backlog) {
 
   // Set the socket to passive mode.
   if (backlog <= 0) backlog = KDefault_Backlog;
-  if (listen(socket_fd_, backlog)) {
+  if (listen(socket_fd_, backlog) < 0) {
     throw ErrnoException(errno);
   }
   DEBUG_PRINT("Socket set to passive mode");
@@ -74,9 +76,20 @@ void TCPServer::Initialize(int backlog) {
 /// @return The address in binary.
 in_addr TCPServer::ConvertAddrBinary(const std::string& address) {
   in_addr addr;
-  if (inet_aton(address.c_str(), &addr) < 0) {
-    throw ErrnoException(errno);
+  if (inet_aton(address.c_str(), &addr) == 0) {
+    throw ConvertBinaryException();
   }
   DEBUG_PRINT("Address converted from: " << address << " to: " << ntohl(addr.s_addr));
   return addr;
+}
+
+/// @brief Close the socket. 
+///   If it is already closed, doesn't do anything.
+void TCPServer::Kill() {
+  if (!initialized_) return;
+  else if (close(socket_fd_) < 0) {
+    throw ErrnoException(errno);
+  }
+  socket_fd_ = -1;
+  initialized_ = false;
 }
