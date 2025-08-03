@@ -65,6 +65,7 @@ class TCPConnection {
   
   private:
     // Private methods
+    static void Move(TCPConnection& s, TCPConnection& source) noexcept;
     TCPConnection(const int socket_fd, const sockaddr_in& addr, const size_t buffer_size);
 
     // Attributes

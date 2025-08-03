@@ -168,3 +168,32 @@ TCPConnection::TCPConnection(const int socket_fd, const sockaddr_in& addr, const
   send_buffer_ = new unsigned char[buffer_size_];
   recv_buffer_ = new unsigned char[buffer_size_];
 }
+
+TCPConnection::TCPConnection(TCPConnection&& aux) {
+  Move(*this, aux);
+}
+
+TCPConnection& TCPConnection::operator=(TCPConnection&& aux) {
+  Move(*this, aux);
+  return *this;
+}
+
+void TCPConnection::Move(TCPConnection& s, TCPConnection& source) noexcept {
+  // Clean old state
+  if (s.send_buffer_ != nullptr) delete[] s.send_buffer_;
+  if (s.recv_buffer_ != nullptr) delete[] s.recv_buffer_;
+  // Move the data
+  s.socket_fd_ = source.socket_fd_;
+  s.addr_ = source.addr_;
+  s.send_buffer_ = source.send_buffer_;
+  s.recv_buffer_ = source.recv_buffer_;
+  s.buffer_size_ = source.buffer_size_;
+  s.initialized_ = source.initialized_;
+  // Erase old instance
+  source.socket_fd_ = -1;
+  memset(&source.addr_, 0, sizeof(source.addr_));
+  source.send_buffer_ = nullptr;
+  source.recv_buffer_ = nullptr;
+  source.buffer_size_ = 0;
+  source.initialized_ = false;
+}
