@@ -39,6 +39,11 @@ TCPServer::TCPServer(const unsigned short port, const std::string& address) {
   socket_addr_.sin_addr = ConvertAddrBinary(address);
 }
 
+/// @brief Destructor of TCPServer.
+TCPServer::~TCPServer() {
+  Kill();
+}
+
 /// @brief Initialize the server.
 ///   Create the socket file descriptor, bind to the address and set to passive mode.
 ///   If it is already initialized, doesn't do anything.
