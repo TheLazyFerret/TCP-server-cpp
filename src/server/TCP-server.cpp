@@ -45,29 +45,15 @@ TCPServer::TCPServer(const unsigned short port, const std::string& address) {
 ///   Create the socket file descriptor, bind to the address and set to passive mode.
 ///   If it is already initialized, doesn't do anything.
 /// @param backlog 
-void TCPServer::Initialize(int backlog) {
+void TCPServer::Initialize(const int backlog) {
   if (initialized_) return;
-  // Initialize socket file descriptor.
-  socket_fd_ = socket(AF_INET, SOCK_STREAM, 0);
-  if (socket_fd_ < 0) {
-    throw ErrnoException(errno);
-  }
-  DEBUG_PRINT("Socket file descriptor created with code: " << socket_fd_);
-
-  // Bind the socket file descriptor to an address.
-  const sockaddr* aux_addr_pointer = reinterpret_cast<sockaddr*>(&socket_addr_);
-  const socklen_t aux_addr_len = static_cast<socklen_t>(sizeof(socket_addr_));
-  if (bind(socket_fd_, aux_addr_pointer, aux_addr_len) < 0) {
-    throw ErrnoException(errno);
-  }
-  DEBUG_PRINT("Socket bound to the port: " << ntohs(socket_addr_.sin_port));
-
+  // Initialize the socket file descriptor.
+  InitializeSocket();
+  // Bind the socket to the address and port.
+  BindSocket();
   // Set the socket to passive mode.
-  if (backlog <= 0) backlog = KDefault_Backlog;
-  if (listen(socket_fd_, backlog) < 0) {
-    throw ErrnoException(errno);
-  }
-  DEBUG_PRINT("Socket set to passive mode");
+  SetPassive(backlog);
+  
   initialized_ = true;
 }
 
@@ -87,9 +73,39 @@ in_addr TCPServer::ConvertAddrBinary(const std::string& address) {
 ///   If it is already closed, doesn't do anything.
 void TCPServer::Kill() {
   if (!initialized_) return;
-  else if (close(socket_fd_) < 0) {
-    throw ErrnoException(errno);
-  }
+  const int temp_socket_fd = socket_fd_;
   socket_fd_ = -1;
   initialized_ = false;
+  if (close(temp_socket_fd) < 0) {
+    throw ErrnoException(errno);
+  }
+}
+
+/// @brief Initialize the socket file descriptor.
+void TCPServer::InitializeSocket() {
+  socket_fd_ = socket(AF_INET, SOCK_STREAM, 0);
+  if (socket_fd_ < 0) {
+    throw ErrnoException(errno);
+  }
+  DEBUG_PRINT("Socket file descriptor created with code: " << socket_fd_);
+}
+
+/// @brief Bind the socket file descriptor to the address.
+void TCPServer::BindSocket() {
+  const sockaddr* aux_addr_pointer = reinterpret_cast<sockaddr*>(&socket_addr_);
+  const socklen_t aux_addr_len = static_cast<socklen_t>(sizeof(socket_addr_));
+  if (bind(socket_fd_, aux_addr_pointer, aux_addr_len) < 0) {
+    throw ErrnoException(errno);
+  }
+  DEBUG_PRINT("Socket bound to the port: " << ntohs(socket_addr_.sin_port));
+}
+
+/// @brief Set the socket file descriptor to passive.
+/// @param backlog
+void TCPServer::SetPassive(const int backlog) {
+  const int effect_backlog = (backlog <= 0) ? KDefault_Backlog : backlog;
+  if (listen(socket_fd_, effect_backlog) < 0) {
+    throw ErrnoException(errno);
+  }
+  DEBUG_PRINT("Socket set to passive mode with backlog size: " << effect_backlog);
 }
