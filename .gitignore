@@ -37,8 +37,10 @@
 *.out
 *.app
 
-# debug information files
+# Debug information files
 *.dwo
 
+# Directories
 build/
 src/client/
+.vscode/

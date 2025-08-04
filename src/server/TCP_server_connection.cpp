@@ -82,14 +82,14 @@ size_t TCPConnection::Send(const void* src, const size_t len, const int flags) c
 /// @param len 
 /// @param flags 
 /// @return The number of bytes received.
-size_t TCPConnection::Recv(void* src, const size_t len, const int flags) const {
+size_t TCPConnection::Recv(void* dst, const size_t len, const int flags) const {
   if (!initialized_) {
     throw NotInitialized();
   }
-  if (src == nullptr) {
+  if (dst == nullptr) {
     throw InvalidPointer();
   }
-  const ssize_t result = recv(socket_fd_, src, len, flags);
+  const ssize_t result = recv(socket_fd_, dst, len, flags);
   if (result < 0) {
     throw ErrnoException(errno);
   }
