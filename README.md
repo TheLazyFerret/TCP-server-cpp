@@ -12,6 +12,8 @@ The library is divided into two classes: `TCPServer` and `TCPConnection.`
 
 `TCPConnection` cannot be instantiated from `main`, only from the `TCPServer::Connect()` method.
 
+The library is inside the namespace `tcp_server`, while the exceptions are inside `tcp_exception`. It is only required to `#include tcp_server.hpp`, due already includes `tcp_exception.hpp`.
+
 ### `TCPServer`
 The main class of the library, responsible for accepting incoming connections.
 - `TCPServer::TCPServer(port, address)` -> Constructor, set the parameters but NOT initialize the server.
