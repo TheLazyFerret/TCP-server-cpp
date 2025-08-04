@@ -1,5 +1,5 @@
 /**
- * @file TCP_server_connection.cpp
+ * @file tcp_server_connection.cpp
  * @author TheLazyFerret (https://github.com/TheLazyFerret)
  * @copyright (c) 2025 TheLazyFerret
  *  Licensed under MIT License. See LICENSE file in the project root for full license information.
@@ -16,7 +16,7 @@
 #include <string>
 #include <iostream>
 
-#include "TCP_server.hpp"
+#include "tcp_server.hpp"
 
 #ifdef DEBUG
   #define DEBUG_PRINT(MESSAGE) std::cerr << "[CONNECTION] " <<  MESSAGE << std::endl

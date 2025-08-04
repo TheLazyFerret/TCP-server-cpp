@@ -17,8 +17,8 @@ endif()
 # Add source files.
 target_sources(${PROJECT_NAME} 
   PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/TCP_server.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/TCP_server_connection.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/tcp_server.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/tcp_server_connection.cpp
 )
 
 # Add the include files.
