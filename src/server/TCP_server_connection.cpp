@@ -57,12 +57,28 @@ void TCPConnection::Kill() {
 /// @brief Send a len ammount of bytes from src.
 /// @param src 
 /// @param len
-/// @return the number of bytes sent
+/// @return The number of bytes sent.
 size_t TCPConnection::Send(const void* src, const size_t len, const int flags) const {
   if (src == nullptr) {
     throw InvalidPointer();
   }
   const ssize_t result = send(socket_fd_, src, len, flags);
+  if (result < 0) {
+    throw ErrnoException(errno);
+  }
+  return static_cast<size_t>(result);
+}
+
+/// @brief Receive message from the socket fd and save it in the buffer src.
+/// @param src 
+/// @param len 
+/// @param flags 
+/// @return The number of bytes received.
+size_t TCPConnection::Recv(void* src, const size_t len, const int flags) const {
+  if (src == nullptr) {
+    throw InvalidPointer();
+  }
+  const ssize_t result = recv(socket_fd_, src, len, flags);
   if (result < 0) {
     throw ErrnoException(errno);
   }
