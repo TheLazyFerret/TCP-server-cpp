@@ -19,8 +19,24 @@
 /// @brief Abstraction class for managing clients.
 class TCPClient {
   public:
+    // Special methods
+    TCPClient() = delete;
+    TCPClient(const TCPClient&) = delete;
+    TCPClient& operator=(const TCPClient&) = delete;
+    TCPClient(TCPClient&&) = delete;
+    TCPClient& operator=(TCPClient&&) = delete;
 
+    TCPClient(const unsigned short port, const std::string& address);
+    ~TCPClient();
+
+    // Normal methods
   private:
+    // Private methods
+
+    // Attributes
+    int socket_fd_;
+    sockaddr_in socket_addr_;
+    bool initialized_;
 };
 
 /// @brief Base class for representing all the exceptions of the class TCPClient.
