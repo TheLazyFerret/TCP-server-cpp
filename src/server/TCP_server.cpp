@@ -138,7 +138,7 @@ void TCPServer::BindSocket() {
 /// @brief Set the socket file descriptor to passive.
 /// @param backlog
 void TCPServer::SetPassive(const int backlog) {
-  const int effective_backlog = (backlog <= 0) ? Kdefault_backlog_ : backlog;
+  const int effective_backlog = (backlog <= 0) ? kDefaultBacklog : backlog;
   if (listen(socket_fd_, effective_backlog) < 0) {
     throw ErrnoException(errno);
   }
@@ -150,7 +150,7 @@ void TCPServer::SetPassive(const int backlog) {
 ///   Can throw an exception if the server is not initialized.
 /// @param buffer_size 
 /// @return a new instance of TCPConnection.
-TCPConnection TCPServer::Accept(const size_t buffer_size) const {
+TCPConnection TCPServer::Accept() const {
   if (!initialized_) {
     throw NotInitialized();
   }

@@ -35,7 +35,7 @@ class TCPServer {
     void Initialize(const int backlog = 0);
 
     void Kill();
-    TCPConnection Accept(const size_t buffer_size = 0) const;
+    TCPConnection Accept() const;
 
     inline bool IsInitialized() const noexcept {return initialized_;}
 
@@ -51,7 +51,7 @@ class TCPServer {
     int socket_fd_;
     sockaddr_in socket_addr_;
     bool initialized_;
-    static constexpr int Kdefault_backlog_ = 5;
+    static constexpr int kDefaultBacklog = 5;
 };
 
 /// @brief Abstraction class for managing connections.
