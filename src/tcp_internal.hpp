@@ -14,7 +14,8 @@
 #include <string>
 
 namespace common {
-
+  in_addr ConvertAddrBinary(const std::string& address);
+  std::string ConvertAddrSring(const in_addr& address);
 }
 
 #endif

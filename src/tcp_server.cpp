@@ -169,3 +169,82 @@ TCPConnection TCPServer::Accept() const {
   DEBUG_PRINT("Accepted conection from: " << ConvertAddrString(client_addr.sin_addr));
   return TCPConnection(client_socket, client_addr);
 }
+
+#undef DEBUG_PRINT
+#ifdef DEBUG
+  #define DEBUG_PRINT(MESSAGE) std::cerr << "[CONNECTION] " <<  MESSAGE << std::endl
+#else
+  #define DEBUG_PRINT(MESSAGE)
+#endif
+
+/// @brief Private constructor of TCPConnection
+///   It is private due not intended to being called directly,
+///   but from a TCPServer::Accept()
+/// @param socket_fd 
+/// @param addr 
+/// @param buffer_size 
+TCPConnection::TCPConnection(const int socket_fd, const sockaddr_in& addr) 
+: socket_fd_(socket_fd), addr_(addr), initialized_(true) {}
+
+/// @brief Destructor of the class TCPConnection.
+TCPConnection::~TCPConnection() {
+  if (!initialized_) {
+    return;
+  }
+  try {
+    Kill();
+  } catch(const TCPServerException& e) {
+    DEBUG_PRINT("Error calling Kill(): " << e.what());
+  }
+}
+
+/// @brief Close the connection.
+void TCPConnection::Kill() {
+  if (!initialized_) {
+    throw NotInitialized();
+  }
+  const int temp_socket_fd = socket_fd_;
+  socket_fd_ = -1;
+  initialized_ = false;
+  if (close(temp_socket_fd) < 0) {
+    throw ErrnoException(errno);
+  }
+  DEBUG_PRINT("Socket closed");
+}
+
+/// @brief Send a len ammount of bytes from src.
+/// @param src 
+/// @param len
+/// @return The number of bytes sent.
+size_t TCPConnection::Send(const void* src, const size_t len, const int flags) const {
+  if (!initialized_) {
+    throw NotInitialized();
+  }
+  if (src == nullptr) {
+    throw InvalidPointer();
+  }
+  const ssize_t result = send(socket_fd_, src, len, flags);
+  if (result < 0) {
+    throw ErrnoException(errno);
+  }
+  return static_cast<size_t>(result);
+}
+
+/// @brief Receive message from the socket fd and save it in the buffer src.
+/// @param src 
+/// @param len 
+/// @param flags 
+/// @return The number of bytes received.
+size_t TCPConnection::Recv(void* dst, const size_t len, const int flags) const {
+  if (!initialized_) {
+    throw NotInitialized();
+  }
+  if (dst == nullptr) {
+    throw InvalidPointer();
+  }
+  const ssize_t result = recv(socket_fd_, dst, len, flags);
+  if (result < 0) {
+    throw ErrnoException(errno);
+  }
+  return static_cast<size_t>(result);
+}

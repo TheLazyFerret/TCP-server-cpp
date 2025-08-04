@@ -83,38 +83,6 @@ class TCPConnection {
     bool initialized_;
 };
 
-/// @brief Base class for representing all the exceptions of the class TCPServer.
-class TCPServerException : public std::exception {
-  public:
-    TCPServerException(const std::string& message) : error_(message) {}
-    const char* what() const noexcept override {return error_.c_str();}
-  private:
-    std::string error_;
-};
-
-/// @brief Meta exception, that represents all error where errno is present.
-class ErrnoException : public TCPServerException {
-  public: 
-    ErrnoException(const int error_code) : TCPServerException(std::string(std::strerror(error_code))) {}
-};
-
-/// @brief Exception called when tried to convert an invalid address.
-class ConvertBinaryException : public TCPServerException {
-  public:
-    ConvertBinaryException(const std::string& address) : TCPServerException("Invalid address: " + address) {}
-};
-
-/// @brief Exception representing situations where trying to access a recurse while object not initialized correctly
-class NotInitialized : public TCPServerException {
-  public:
-    NotInitialized() : TCPServerException("Trying to access a method while object not correctly initialized") {}
-};
-
-/// @brief Exception sent when a pointer is invalid.
-///   Basically trying to avoid a seg fault.
-class InvalidPointer : public TCPServerException {
-  public:
-    InvalidPointer() : TCPServerException("The pointer is invalid") {}
-};
+#include "tcp_exceptions.hpp"
 
 #endif
