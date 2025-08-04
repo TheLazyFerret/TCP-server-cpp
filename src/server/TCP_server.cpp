@@ -41,11 +41,30 @@ TCPServer::TCPServer(const unsigned short port, const std::string& address) {
 
 /// @brief Destructor of TCPServer.
 TCPServer::~TCPServer() {
+  if (!initialized_) {
+    return;
+  }
   try {
     Kill();
   } catch(const TCPServerException& e) {
     DEBUG_PRINT("Error calling Kill(): " << e.what());
   } 
+}
+
+/// @brief Close the socket. 
+///   If it is already closed, doesn't do anything.
+///   Can throw an exception if the Server is not initialized.
+void TCPServer::Kill() {
+  if (!initialized_) {
+    throw NotInitialized();
+  }
+  const int temp_socket_fd = socket_fd_;
+  socket_fd_ = -1;
+  initialized_ = false;
+  if (close(temp_socket_fd) < 0) {
+    throw ErrnoException(errno);
+  }
+  DEBUG_PRINT("Socket closed");
 }
 
 /// @brief Initialize the server.
@@ -95,22 +114,6 @@ std::string TCPServer::ConvertAddrString(const in_addr& address) {
   const std::string result(str);
   //DEBUG_PRINT("Address converted from: " << ntohl(address.s_addr) << " to: " << result);
   return result;
-}
-
-/// @brief Close the socket. 
-///   If it is already closed, doesn't do anything.
-///   Can throw an exception if the Server is not initialized.
-void TCPServer::Kill() {
-  if (!initialized_) {
-    throw NotInitialized();
-  }
-  const int temp_socket_fd = socket_fd_;
-  socket_fd_ = -1;
-  initialized_ = false;
-  if (close(temp_socket_fd) < 0) {
-    throw ErrnoException(errno);
-  }
-  DEBUG_PRINT("Socket closed");
 }
 
 /// @brief Initialize the socket file descriptor.

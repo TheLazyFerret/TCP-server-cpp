@@ -16,6 +16,12 @@ int main(void) {
   server.Initialize();
   TCPConnection client = server.Accept();
 
+  constexpr size_t buffer_size = 100;
+  char buffer[buffer_size];
+
+  client.Recv(buffer, buffer_size);
+  std::cout << buffer[0] << std::endl;
+
   server.Kill();
   client.Kill();
 

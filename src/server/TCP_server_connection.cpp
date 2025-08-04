@@ -35,6 +35,9 @@ TCPConnection::TCPConnection(const int socket_fd, const sockaddr_in& addr)
 
 /// @brief Destructor of the class TCPConnection.
 TCPConnection::~TCPConnection() {
+  if (!initialized_) {
+    return;
+  }
   try {
     Kill();
   } catch(const TCPServerException& e) {
@@ -44,7 +47,9 @@ TCPConnection::~TCPConnection() {
 
 /// @brief Close the connection.
 void TCPConnection::Kill() {
-  if (!initialized_) return;
+  if (!initialized_) {
+    throw NotInitialized();
+  }
   const int temp_socket_fd = socket_fd_;
   socket_fd_ = -1;
   initialized_ = false;
@@ -59,6 +64,9 @@ void TCPConnection::Kill() {
 /// @param len
 /// @return The number of bytes sent.
 size_t TCPConnection::Send(const void* src, const size_t len, const int flags) const {
+  if (!initialized_) {
+    throw NotInitialized();
+  }
   if (src == nullptr) {
     throw InvalidPointer();
   }
@@ -75,6 +83,9 @@ size_t TCPConnection::Send(const void* src, const size_t len, const int flags) c
 /// @param flags 
 /// @return The number of bytes received.
 size_t TCPConnection::Recv(void* src, const size_t len, const int flags) const {
+  if (!initialized_) {
+    throw NotInitialized();
+  }
   if (src == nullptr) {
     throw InvalidPointer();
   }

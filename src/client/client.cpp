@@ -34,5 +34,13 @@ int main() {
 
   connect(socket_fd, addr_pointer, addr_len);
 
+  constexpr size_t buffer_size = 100;
+
+  char buffer[buffer_size];
+  memset(buffer, 'P', buffer_size);
+
+  send(socket_fd, buffer, buffer_size, 0);
+
+
   close(socket_fd);
 }
