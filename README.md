@@ -17,7 +17,7 @@ The main class of the library, responsible for accepting incoming connections.
 ### `TCPConnection`
 Class representing each connection with a client. It is automatically initialized when it is instantiated.
 - `TCPConnection::Send(src*, len, flags)` -> Transmit a message to the client. src can be a pointer of any type.
-- `TCPConnection::Recv(src*, len, flags)` -> Recover a message sent by the client. src can be a pointer of any type.
+- `TCPConnection::Recv(dst*, len, flags)` -> Recover a message sent by the client. src can be a pointer of any type.
 - `TCPConnection::Kill()` -> close the socket file descriptor. If it is not called before it object goes out of scope, is called by destructor.
 
 ## Compilation
