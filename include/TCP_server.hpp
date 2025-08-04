@@ -51,7 +51,7 @@ class TCPServer {
     int socket_fd_;
     sockaddr_in socket_addr_;
     bool initialized_;
-    static constexpr int kDefaultBacklog = 5;
+    static constexpr int KDefaultBacklog = 5;
 };
 
 /// @brief Abstraction class for managing connections.

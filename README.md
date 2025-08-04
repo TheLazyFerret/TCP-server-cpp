@@ -1,5 +1,6 @@
 # TCP-server-cpp
-library whose objective is to abstract as much as possible from the C methods.
+library whose objective is to abstract as much as possible from the C methods.  
+Only for unix systems.
 
 ## Usage
 The library is divided into two classes: `TCPServer` and `TCPConnection.`
@@ -20,7 +21,7 @@ Class representing each connection with a client. It is automatically initialize
 - `TCPConnection::Kill()` -> close the socket file descriptor. If it is not called before it object goes out of scope, is called by destructor.
 
 ## Compilation
-WIP
+Can be compiled using `cmake` and `make`, generating a static library `TCPServer` (libTCPServer.a)
 
 ## Example
 A very simple example can be found in [server.cpp](example/server.cpp)

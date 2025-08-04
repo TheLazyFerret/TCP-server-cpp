@@ -138,7 +138,7 @@ void TCPServer::BindSocket() {
 /// @brief Set the socket file descriptor to passive.
 /// @param backlog
 void TCPServer::SetPassive(const int backlog) {
-  const int effective_backlog = (backlog <= 0) ? kDefaultBacklog : backlog;
+  const int effective_backlog = (backlog <= 0) ? KDefaultBacklog : backlog;
   if (listen(socket_fd_, effective_backlog) < 0) {
     throw ErrnoException(errno);
   }
