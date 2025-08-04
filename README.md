@@ -1,6 +1,11 @@
-# TCP-server-cpp
-library whose objective is to abstract as much as possible from the C methods.  
+# tcp-wrapper-cpp
+library whose objective is to abstract as much as possible from the C methods.
+
 Only for unix systems.
+
+## ToDo
+- [x] TCPServer
+- [ ] TCPClient
 
 ## Usage
 The library is divided into two classes: `TCPServer` and `TCPConnection.`
