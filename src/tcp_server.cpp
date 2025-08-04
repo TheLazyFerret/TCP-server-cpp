@@ -8,6 +8,7 @@
  */
 
 #include "tcp_server.hpp"
+#include "tcp_internal.hpp"
 
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -39,7 +40,7 @@ TCPServer::TCPServer(const unsigned short port, const std::string& address) {
   // Initialize address.
   socket_addr_.sin_family = AF_INET;
   socket_addr_.sin_port = htons(port);
-  socket_addr_.sin_addr = ConvertAddrBinary(address);
+  socket_addr_.sin_addr = tcp_internal::ConvertAddrBinary(address);
 }
 
 /// @brief Destructor of TCPServer.
@@ -87,36 +88,6 @@ void TCPServer::Initialize(const int backlog) {
   SetPassive(backlog);
   
   initialized_ = true;
-}
-
-/// @brief Convert a string address into a binary (in network order) address.
-/// @param address 
-/// @return The address in binary.
-in_addr TCPServer::ConvertAddrBinary(const std::string& address) {
-  in_addr addr;
-  memset(&addr, 0, sizeof(addr));
-  const int result = inet_pton(AF_INET, address.c_str(), &addr);
-  if (result == 0) {
-    throw ConvertBinaryException(address);
-  }
-  else if (result < 0) {
-    throw ErrnoException(errno);
-  }
-  //DEBUG_PRINT("Address converted from: " << address << " to: " << ntohl(addr.s_addr));
-  return addr;
-}
-
-/// @brief Convert a Binary address to a string format.
-/// @param address 
-/// @return The address as a string.
-std::string TCPServer::ConvertAddrString(const in_addr& address) {
-  char str[INET_ADDRSTRLEN];
-  if (inet_ntop(AF_INET, &address, str, INET_ADDRSTRLEN) == nullptr) {
-    throw ErrnoException(errno);
-  }
-  const std::string result(str);
-  //DEBUG_PRINT("Address converted from: " << ntohl(address.s_addr) << " to: " << result);
-  return result;
 }
 
 /// @brief Initialize the socket file descriptor.
@@ -169,7 +140,7 @@ TCPConnection TCPServer::Accept() const {
   if (client_socket < 0) {
     throw ErrnoException(errno);
   }
-  DEBUG_PRINT("Accepted conection from: " << ConvertAddrString(client_addr.sin_addr));
+  DEBUG_PRINT("Accepted conection from: " << tcp_internal::ConvertAddrSring(client_addr.sin_addr));
   return TCPConnection(client_socket, client_addr);
 }
 

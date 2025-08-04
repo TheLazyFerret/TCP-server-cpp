@@ -17,11 +17,12 @@ endif()
 # Add source files.
 target_sources(${PROJECT_NAME} 
   PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/tcp_server.cpp
+    ${CMAKE_SOURCE_DIR}/src/tcp_internal.cpp
+    ${CMAKE_SOURCE_DIR}/src/tcp_server.cpp
 )
 
 # Add the include files.
 target_include_directories(${PROJECT_NAME} 
   PUBLIC 
-    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CMAKE_SOURCE_DIR}/include
 )

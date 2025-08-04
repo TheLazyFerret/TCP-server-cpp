@@ -45,8 +45,6 @@ class TCPServer {
 
   private:
     // Private methods
-    static in_addr ConvertAddrBinary(const std::string& address);
-    static std::string ConvertAddrString(const in_addr& address);
     void InitializeSocket();
     void BindSocket();
     void SetPassive(const int backlog);

@@ -11,11 +11,14 @@
 #define TCP_COMMON_HPP
 
 #include <netinet/in.h>
+
 #include <string>
 
-namespace common {
-  in_addr ConvertAddrBinary(const std::string& address);
-  std::string ConvertAddrSring(const in_addr& address);
+namespace tcp_internal {
+
+in_addr ConvertAddrBinary(const std::string& address);
+std::string ConvertAddrSring(const in_addr& address);
+
 }
 
 #endif
