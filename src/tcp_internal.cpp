@@ -7,6 +7,8 @@
  * @brief implementation of common functions used by both libraries.
  */
 
+#include "tcp_internal.hpp"
+
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>

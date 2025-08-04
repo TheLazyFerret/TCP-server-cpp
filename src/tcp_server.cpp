@@ -7,6 +7,8 @@
  * @brief Implementation file for the TCPServer.
  */
 
+#include "tcp_server.hpp"
+
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
@@ -16,13 +18,14 @@
 #include <string>
 #include <iostream>
 
-#include "tcp_server.hpp"
-
 #ifdef DEBUG
   #define DEBUG_PRINT(MESSAGE) std::cerr << "[SERVER] " <<  MESSAGE << std::endl
 #else
   #define DEBUG_PRINT(MESSAGE)
 #endif
+
+using namespace tcp_server;
+using namespace tcp_exception;
 
 /// @brief Constructor of TCPServer.
 /// @param port 
@@ -46,7 +49,7 @@ TCPServer::~TCPServer() {
   }
   try {
     Kill();
-  } catch(const TCPServerException& e) {
+  } catch(const TCPException& e) {
     DEBUG_PRINT("Error calling Kill(): " << e.what());
   } 
 }
@@ -193,7 +196,7 @@ TCPConnection::~TCPConnection() {
   }
   try {
     Kill();
-  } catch(const TCPServerException& e) {
+  } catch(const TCPException& e) {
     DEBUG_PRINT("Error calling Kill(): " << e.what());
   }
 }

@@ -1,5 +1,5 @@
 /**
- * @file tcp_.hpp
+ * @file tcp_exception.hpp
  * @author TheLazyFerret (https://github.com/TheLazyFerret)
  * @copyright (c) 2025 TheLazyFerret
  *  Licensed under MIT License. See LICENSE file in the project root for full license information.
@@ -8,45 +8,49 @@
  *   Don't require to be included 
  */
 
-#ifndef TCP_EXCEPTIONS_HPP
-#define TCP_EXCEPTIONS_HPP
+#ifndef TCP_EXCEPTION_HPP
+#define TCP_EXCEPTION_HPP
 
 #include <exception>
 #include <string>
 #include <cstring>
 
-/// @brief Base class for representing all the exceptions of the class TCPServer.
-class TCPServerException : public std::exception {
+namespace tcp_exception {
+
+/// @brief Base class for representing all the exceptions of the class library.
+class TCPException : public std::exception {
   public:
-    TCPServerException(const std::string& message) : error_(message) {}
+    TCPException(const std::string& message) : error_(message) {}
     const char* what() const noexcept override {return error_.c_str();}
   private:
     std::string error_;
 };
 
 /// @brief Meta exception, that represents all error where errno is present.
-class ErrnoException : public TCPServerException {
+class ErrnoException : public TCPException {
   public: 
-    ErrnoException(const int error_code) : TCPServerException(std::string(std::strerror(error_code))) {}
+    ErrnoException(const int error_code) : TCPException(std::string(std::strerror(error_code))) {}
 };
 
 /// @brief Exception called when tried to convert an invalid address.
-class ConvertBinaryException : public TCPServerException {
+class ConvertBinaryException : public TCPException {
   public:
-    ConvertBinaryException(const std::string& address) : TCPServerException("Invalid address: " + address) {}
+    ConvertBinaryException(const std::string& address) : TCPException("Invalid address: " + address) {}
 };
 
 /// @brief Exception representing situations where trying to access a recurse while object not initialized correctly
-class NotInitialized : public TCPServerException {
+class NotInitialized : public TCPException {
   public:
-    NotInitialized() : TCPServerException("Trying to access a method while object not correctly initialized") {}
+    NotInitialized() : TCPException("Trying to access a method while object not correctly initialized") {}
 };
 
 /// @brief Exception sent when a pointer is invalid.
 ///   Basically trying to avoid a seg fault.
-class InvalidPointer : public TCPServerException {
+class InvalidPointer : public TCPException {
   public:
-    InvalidPointer() : TCPServerException("The pointer is invalid") {}
+    InvalidPointer() : TCPException("The pointer is invalid") {}
 };
+
+}
 
 #endif

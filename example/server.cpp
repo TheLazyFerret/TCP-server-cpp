@@ -9,12 +9,12 @@
 
 #include <iostream>
 
-#include "TCP_server.hpp"
+#include "tcp_server.hpp"
 
 int main(void) {
-  TCPServer server(5000, "127.0.0.1");
+  tcp_server::TCPServer server(5000, "127.0.0.1");
   server.Initialize();
-  TCPConnection client = server.Accept();
+  tcp_server::TCPConnection client = server.Accept();
 
   constexpr size_t buffer_size = 100;
   char buffer[buffer_size];

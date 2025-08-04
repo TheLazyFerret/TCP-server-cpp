@@ -10,11 +10,15 @@
 #ifndef TCP_SERVER_HPP
 #define TCP_SERVER_HPP
 
+#include "tcp_exception.hpp"
+
 #include <netinet/in.h>
 
 #include <exception>
 #include <string>
 #include <cstring>
+
+namespace tcp_server {
 
 class TCPConnection;
 
@@ -83,6 +87,6 @@ class TCPConnection {
     bool initialized_;
 };
 
-#include "tcp_exceptions.hpp"
+}
 
 #endif
