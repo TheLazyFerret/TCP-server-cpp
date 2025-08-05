@@ -59,12 +59,8 @@ void TCPServer::Kill() {
   if (!initialized_) {
     throw NotInitialized();
   }
-  const int temp_socket_fd = socket_fd_;
-  socket_fd_ = -1;
+  tcp_internal::KillSocketfd(socket_fd_);
   initialized_ = false;
-  if (close(temp_socket_fd) < 0) {
-    throw ErrnoException(errno);
-  }
   DEBUG_PRINT("Socket closed");
 }
 
@@ -89,10 +85,7 @@ void TCPServer::Initialize(const int backlog) {
 
 /// @brief Initialize the socket file descriptor.
 void TCPServer::InitializeSocket() {
-  socket_fd_ = socket(AF_INET, SOCK_STREAM, 0);
-  if (socket_fd_ < 0) {
-    throw ErrnoException(errno);
-  }
+  socket_fd_ = tcp_internal::InitializeSocket();
   DEBUG_PRINT("Socket file descriptor created with code: " << socket_fd_);
 }
 
@@ -174,12 +167,8 @@ void TCPConnection::Kill() {
   if (!initialized_) {
     throw NotInitialized();
   }
-  const int temp_socket_fd = socket_fd_;
-  socket_fd_ = -1;
+  tcp_internal::KillSocketfd(socket_fd_);
   initialized_ = false;
-  if (close(temp_socket_fd) < 0) {
-    throw ErrnoException(errno);
-  }
   DEBUG_PRINT("Socket closed");
 }
 
@@ -191,14 +180,7 @@ size_t TCPConnection::Send(const void* src, const size_t len, const int flags) c
   if (!initialized_) {
     throw NotInitialized();
   }
-  if (src == nullptr) {
-    throw InvalidPointer();
-  }
-  const ssize_t result = send(socket_fd_, src, len, flags);
-  if (result < 0) {
-    throw ErrnoException(errno);
-  }
-  return static_cast<size_t>(result);
+  return tcp_internal::Send(src, len, flags, socket_fd_);
 }
 
 /// @brief Receive message from the socket fd and save it in the buffer src.
@@ -210,12 +192,5 @@ size_t TCPConnection::Recv(void* dst, const size_t len, const int flags) const {
   if (!initialized_) {
     throw NotInitialized();
   }
-  if (dst == nullptr) {
-    throw InvalidPointer();
-  }
-  const ssize_t result = recv(socket_fd_, dst, len, flags);
-  if (result < 0) {
-    throw ErrnoException(errno);
-  }
-  return static_cast<size_t>(result);
+  return tcp_internal::Recv(dst, len, flags, socket_fd_);
 }

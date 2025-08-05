@@ -19,6 +19,12 @@ namespace tcp_internal {
 in_addr ConvertAddrBinary(const std::string& address);
 std::string ConvertAddrSring(const in_addr& address);
 
+int InitializeSocket();
+void KillSocketfd(int& socket_fd);
+
+size_t Send(const void* src, const size_t len, const int flags, const int socket_fd);
+size_t Recv(void* dst, const size_t len, const int flags, const int socket_fd);
+
 }
 
 #endif

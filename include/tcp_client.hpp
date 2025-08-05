@@ -28,9 +28,12 @@ class TCPClient {
     TCPClient(const unsigned short port, const std::string& address);
     ~TCPClient();
     // Normal methods
+    void Connect();
+    void kill();
 
   private:
     // Private methods
+    void InitializeSocket();
 
     // Attributes
     int socket_fd_;

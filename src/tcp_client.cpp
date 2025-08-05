@@ -40,3 +40,11 @@ TCPClient::TCPClient(const unsigned short port, const std::string& address)
   socket_addr_.sin_addr = tcp_internal::ConvertAddrBinary(address);
 }
 
+void TCPClient::Connect() {
+
+}
+
+void TCPClient::InitializeSocket() {
+  socket_fd_ = tcp_internal::InitializeSocket();
+  DEBUG_PRINT("Socket file descriptor created with code: " << socket_fd_);
+}
