@@ -40,10 +40,18 @@ TCPClient::TCPClient(const unsigned short port, const std::string& address)
   socket_addr_.sin_addr = tcp_internal::ConvertAddrBinary(address);
 }
 
+/// @brief Connect the socket_fd_ to a server.
 void TCPClient::Connect() {
-
+  const sockaddr* aux_pointer = reinterpret_cast<sockaddr*>(&socket_addr_);
+  const socklen_t aux_len = static_cast<socklen_t>(sizeof(socket_addr_));
+  if (connect(socket_fd_, aux_pointer, aux_len) < 0) {
+    throw ErrnoException(errno);
+  }
+  DEBUG_PRINT("Client succesfully connected to the server: " 
+    << tcp_internal::ConvertAddrSring(socket_addr_.sin_addr));
 }
 
+/// @brief Initialize the socket file descriptor.
 void TCPClient::InitializeSocket() {
   socket_fd_ = tcp_internal::InitializeSocket();
   DEBUG_PRINT("Socket file descriptor created with code: " << socket_fd_);
