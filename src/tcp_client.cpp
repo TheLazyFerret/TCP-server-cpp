@@ -31,7 +31,7 @@ using namespace tcp_client;
 /// @brief Constructor of TCPClient.
 /// @param port 
 /// @param address 
-TCPClient::TCPClient(const unsigned short port, const std::string& address) 
+TCPClient::TCPClient(const unsigned short port, const std::string& address)
 : socket_fd_(-1), initialized_(false) {
   // Initialize address
   memset(&socket_addr_, 0, sizeof(socket_addr_));
@@ -51,6 +51,7 @@ TCPClient::~TCPClient() {
 
 /// @brief Connect the socket_fd_ to a server.
 void TCPClient::Connect() {
+  InitializeSocket();
   const sockaddr* aux_pointer = reinterpret_cast<sockaddr*>(&socket_addr_);
   const socklen_t aux_len = static_cast<socklen_t>(sizeof(socket_addr_));
   if (connect(socket_fd_, aux_pointer, aux_len) < 0) {
@@ -86,7 +87,9 @@ size_t TCPClient::Send(const void* src, const size_t len, const int flags) const
   if (!initialized_) {
     throw NotInitialized();
   }
-  return tcp_internal::Send(src, len, flags, socket_fd_);
+  const size_t result = tcp_internal::Send(src, len, flags, socket_fd_);
+  DEBUG_PRINT("Sent: " << result << " bytes");
+  return result;
 }
 
 /// @brief Receive message from the socket fd and save it in the buffer src.
@@ -98,5 +101,7 @@ size_t TCPClient::Recv(void* dst, const size_t len, const int flags) const {
   if (!initialized_) {
     throw NotInitialized();
   }
-  return tcp_internal::Recv(dst, len, flags, socket_fd_);
+  const size_t result = tcp_internal::Recv(dst, len, flags, socket_fd_);
+  DEBUG_PRINT("Received: " << result << " bytes");
+  return result;
 }

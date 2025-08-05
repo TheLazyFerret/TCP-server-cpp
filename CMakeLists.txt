@@ -21,7 +21,6 @@ if (DEBUG_MODE)
   target_compile_definitions(${TCP_CLIENT_LIBNAME} PRIVATE DEBUG=1) # CLIENT
 endif()
 
-# SERVER
 target_sources(${TCP_SERVER_LIBNAME} # SERVER
   PRIVATE
     ${CMAKE_SOURCE_DIR}/src/tcp_internal.cpp
@@ -39,7 +38,7 @@ target_include_directories(${TCP_SERVER_LIBNAME} # SERVER
     ${CMAKE_SOURCE_DIR}/include
 )
 
-target_include_directories(${TCP_CLIENT_LIBNAME}
+target_include_directories(${TCP_CLIENT_LIBNAME} # CLIENT
   PUBLIC
   ${CMAKE_SOURCE_DIR}/include    
 )

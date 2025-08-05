@@ -174,7 +174,9 @@ size_t TCPConnection::Send(const void* src, const size_t len, const int flags) c
   if (!initialized_) {
     throw NotInitialized();
   }
-  return tcp_internal::Send(src, len, flags, socket_fd_);
+  const size_t result = tcp_internal::Send(src, len, flags, socket_fd_);
+  DEBUG_PRINT("Sent: " << result << " bytes");
+  return result;
 }
 
 /// @brief Receive message from the socket fd and save it in the buffer src.
@@ -186,5 +188,7 @@ size_t TCPConnection::Recv(void* dst, const size_t len, const int flags) const {
   if (!initialized_) {
     throw NotInitialized();
   }
-  return tcp_internal::Recv(dst, len, flags, socket_fd_);
+  const size_t result = tcp_internal::Recv(dst, len, flags, socket_fd_);
+  DEBUG_PRINT("Received: " << result << " bytes");
+  return result;
 }
