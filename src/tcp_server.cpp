@@ -31,13 +31,10 @@ using namespace tcp_exception;
 /// @brief Constructor of TCPServer.
 /// @param port 
 /// @param address 
-TCPServer::TCPServer(const unsigned short port, const std::string& address) {
-  // Initialize attributes.
-  initialized_ = false;
-  socket_fd_ = -1;
-  memset(&socket_addr_, 0, sizeof(socket_addr_));
-
+TCPServer::TCPServer(const unsigned short port, const std::string& address)
+:socket_fd_(-1), initialized_(false) {
   // Initialize address.
+  memset(&socket_addr_, 0, sizeof(socket_addr_));
   socket_addr_.sin_family = AF_INET;
   socket_addr_.sin_port = htons(port);
   socket_addr_.sin_addr = tcp_internal::ConvertAddrBinary(address);
