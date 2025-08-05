@@ -31,6 +31,11 @@ class TCPClient {
     void Connect();
     void Kill();
 
+    inline bool IsInitialized() const noexcept {return initialized_;}
+
+    size_t Send(const void* src, const size_t len, const int flags = 0) const;
+    size_t Recv(void* dst, const size_t len, const int flags = 0) const;
+
   private:
     // Private methods
     void InitializeSocket();

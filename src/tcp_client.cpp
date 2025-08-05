@@ -76,3 +76,27 @@ void TCPClient::Kill() {
   initialized_ = false;
   DEBUG_PRINT("Connection closed");
 }
+
+/// @brief Send a len ammount of bytes from src.
+/// @param src 
+/// @param len 
+/// @param flags 
+/// @return The number of bytes sent.
+size_t TCPClient::Send(const void* src, const size_t len, const int flags) const {
+  if (!initialized_) {
+    throw NotInitialized();
+  }
+  return tcp_internal::Send(src, len, flags, socket_fd_);
+}
+
+/// @brief Receive message from the socket fd and save it in the buffer src.
+/// @param src 
+/// @param len 
+/// @param flags 
+/// @return The number of bytes received.
+size_t TCPClient::Recv(void* dst, const size_t len, const int flags) const {
+  if (!initialized_) {
+    throw NotInitialized();
+  }
+  return tcp_internal::Recv(dst, len, flags, socket_fd_);
+}
