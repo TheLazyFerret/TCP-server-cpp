@@ -29,7 +29,7 @@ class TCPClient {
     ~TCPClient();
     // Normal methods
     void Connect();
-    void kill();
+    void Kill();
 
   private:
     // Private methods

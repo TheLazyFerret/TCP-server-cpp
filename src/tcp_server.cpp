@@ -45,11 +45,8 @@ TCPServer::~TCPServer() {
   if (!initialized_) {
     return;
   }
-  try {
-    Kill();
-  } catch(const TCPException& e) {
-    DEBUG_PRINT("Error calling Kill(): " << e.what());
-  } 
+  try {Kill();}
+  catch(const TCPException& e) {DEBUG_PRINT("Error calling Kill(): " << e.what());} 
 }
 
 /// @brief Close the socket. 
@@ -155,11 +152,8 @@ TCPConnection::~TCPConnection() {
   if (!initialized_) {
     return;
   }
-  try {
-    Kill();
-  } catch(const TCPException& e) {
-    DEBUG_PRINT("Error calling Kill(): " << e.what());
-  }
+  try {Kill();} 
+  catch(const TCPException& e) {DEBUG_PRINT("Error calling Kill(): " << e.what());}
 }
 
 /// @brief Close the connection.

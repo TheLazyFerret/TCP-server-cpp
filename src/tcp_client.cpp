@@ -40,6 +40,15 @@ TCPClient::TCPClient(const unsigned short port, const std::string& address)
   socket_addr_.sin_addr = tcp_internal::ConvertAddrBinary(address);
 }
 
+/// @brief Destructor of TCPClient.
+TCPClient::~TCPClient() {
+  if (!initialized_) {
+    return;
+  }
+  try {Kill();}
+  catch (const TCPException& e) {DEBUG_PRINT("Error calling Kill(): " << e.what());}
+}
+
 /// @brief Connect the socket_fd_ to a server.
 void TCPClient::Connect() {
   const sockaddr* aux_pointer = reinterpret_cast<sockaddr*>(&socket_addr_);
@@ -47,6 +56,7 @@ void TCPClient::Connect() {
   if (connect(socket_fd_, aux_pointer, aux_len) < 0) {
     throw ErrnoException(errno);
   }
+  initialized_ = true;
   DEBUG_PRINT("Client succesfully connected to the server: " 
     << tcp_internal::ConvertAddrSring(socket_addr_.sin_addr));
 }
@@ -55,4 +65,14 @@ void TCPClient::Connect() {
 void TCPClient::InitializeSocket() {
   socket_fd_ = tcp_internal::InitializeSocket();
   DEBUG_PRINT("Socket file descriptor created with code: " << socket_fd_);
+}
+
+/// @brief Close the connection if it is open.
+void TCPClient::Kill() {
+  if (!initialized_) {
+    throw NotInitialized();
+  }
+  tcp_internal::KillSocketfd(socket_fd_);
+  initialized_ = false;
+  DEBUG_PRINT("Connection closed");
 }
