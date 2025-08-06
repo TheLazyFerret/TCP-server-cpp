@@ -1,6 +1,6 @@
 # Begin
 cmake_minimum_required(VERSION 3.20)
-project(tcp_wrapper_cpp)
+project(tcp-wrapper-cpp)
 
 # Set libraries name
 set(TCP_SERVER_LIBNAME tcp_server) # SERVER
@@ -23,23 +23,23 @@ endif()
 
 target_sources(${TCP_SERVER_LIBNAME} # SERVER
   PRIVATE
-    ${CMAKE_SOURCE_DIR}/src/tcp_internal.cpp
-    ${CMAKE_SOURCE_DIR}/src/tcp_server.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/tcp_internal.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/tcp_server.cpp
 )
 
 target_sources(${TCP_CLIENT_LIBNAME} # CLIENT
   PRIVATE
-    ${CMAKE_SOURCE_DIR}/src/tcp_internal.cpp
-    ${CMAKE_SOURCE_DIR}/src/tcp_client.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/tcp_internal.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/tcp_client.cpp
 )
 
 target_include_directories(${TCP_SERVER_LIBNAME} # SERVER
   PUBLIC 
-    ${CMAKE_SOURCE_DIR}/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
 target_include_directories(${TCP_CLIENT_LIBNAME} # CLIENT
   PUBLIC
-  ${CMAKE_SOURCE_DIR}/include    
+  ${CMAKE_CURRENT_SOURCE_DIR}/include    
 )
 
