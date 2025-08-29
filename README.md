@@ -41,7 +41,7 @@ Represents a single TCP client connected to a server connection.
 
 ## Compilation
 Not needed!  
-Both libraries don't need individual compilation
+None of the libraries require separate compilation.
 
 ## Example
 - A very simple example of a server can be found in [server.cpp](example/server.cpp)
