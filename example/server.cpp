@@ -7,7 +7,11 @@
  * @brief Main file example of TCPServer usage.
  */
 
-#include "../include/tcp_wrapper/tcp_server.hpp"
+// compilation example: g++ example/server.cpp -Iinclude -o server
+
+#define DEBUG
+
+#include "tcp_wrapper/tcp_server.hpp"
 
 #include <iostream>
 

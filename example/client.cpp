@@ -7,8 +7,12 @@
  * @brief Main file example of TCPClient usage.
  */
 
+// compilation example: g++ example/client.cpp -Iinclude -o client
 
-#include "tcp_client.hpp"
+#define DEBUG
+
+#include "tcp_wrapper/tcp_client.hpp"
+
 #include <iostream>
 #include <string>
 

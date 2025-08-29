@@ -40,9 +40,8 @@ Represents a single TCP client connected to a server connection.
 - `TCPClient::Kill()` -> Closes the connection. Automatically called by the destructor if not done manually.
 
 ## Compilation
-Can be build using `cmake`, generating two static libraries:
-- tcp_server (`libtcp_server.a`)
-- tcp_client (`libtcp_client.a`)
+Not needed!  
+Both libraries don't need individual compilation
 
 ## Example
 - A very simple example of a server can be found in [server.cpp](example/server.cpp)
