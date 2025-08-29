@@ -7,9 +7,9 @@
  * @brief Main file example of TCPServer usage.
  */
 
-#include <iostream>
+#include "../include/tcp_wrapper/tcp_server.hpp"
 
-#include "tcp_server.hpp"
+#include <iostream>
 
 int main() {
   tcp_server::TCPServer server(5000, "127.0.0.1");
