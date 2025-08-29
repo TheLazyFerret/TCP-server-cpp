@@ -4,7 +4,7 @@
  * @copyright (c) 2025 TheLazyFerret
  *  Licensed under MIT License. See LICENSE file in the project root for full license information.
  * 
- * @brief Header file of the TCPServer.
+ * @brief Library wrapping all the quirks of a server socket programming. Uses moderm c++ features.
  */
 
 #ifndef TCP_WRAPPER_SERVER_HPP
@@ -106,7 +106,7 @@ inline tcp_server::TCPServer::TCPServer(const unsigned short port, const std::st
   memset(&socket_addr_, 0, sizeof(socket_addr_));
   socket_addr_.sin_family = AF_INET;
   socket_addr_.sin_port = htons(port);
-  socket_addr_.sin_addr = tcp_internal::ConvertAddrBinary(address);
+  socket_addr_.sin_addr = tcp_shared::ConvertAddrBinary(address);
 }
 
 /// @brief Destructor of TCPServer.
@@ -125,7 +125,7 @@ inline void tcp_server::TCPServer::Kill() {
   if (!initialized_) {
     throw tcp_exception::NotInitialized();
   }
-  tcp_internal::KillSocketfd(socket_fd_);
+  tcp_shared::KillSocketfd(socket_fd_);
   initialized_ = false;
   DEBUG_PRINT("Socket closed");
 }
@@ -151,7 +151,7 @@ inline void tcp_server::TCPServer::Initialize(const int backlog) {
 
 /// @brief Initialize the socket file descriptor.
 inline void tcp_server::TCPServer::InitializeSocket() {
-  socket_fd_ = tcp_internal::InitializeSocket();
+  socket_fd_ = tcp_shared::InitializeSocket();
   DEBUG_PRINT("Socket file descriptor created with code: " << socket_fd_);
 }
 
@@ -196,7 +196,7 @@ inline tcp_server::TCPConnection tcp_server::TCPServer::Accept() const {
   if (client_socket < 0) {
     throw tcp_exception::ErrnoException(errno);
   }
-  DEBUG_PRINT("Accepted conection from: " << tcp_internal::ConvertAddrSring(client_addr.sin_addr));
+  DEBUG_PRINT("Accepted conection from: " << tcp_shared::ConvertAddrSring(client_addr.sin_addr));
   return TCPConnection(client_socket, client_addr);
 }
 
@@ -230,7 +230,7 @@ inline void tcp_server::TCPConnection::Kill() {
   if (!initialized_) {
     throw tcp_exception::NotInitialized();
   }
-  tcp_internal::KillSocketfd(socket_fd_);
+  tcp_shared::KillSocketfd(socket_fd_);
   initialized_ = false;
   DEBUG_PRINT("Socket closed");
 }
@@ -243,7 +243,7 @@ inline size_t tcp_server::TCPConnection::Send(const void* src, const size_t len,
   if (!initialized_) {
     throw tcp_exception::NotInitialized();
   }
-  const size_t result = tcp_internal::Send(src, len, flags, socket_fd_);
+  const size_t result = tcp_shared::Send(src, len, flags, socket_fd_);
   DEBUG_PRINT("Sent: " << result << " bytes");
   return result;
 }
@@ -257,7 +257,7 @@ inline size_t tcp_server::TCPConnection::Recv(void* dst, const size_t len, const
   if (!initialized_) {
     throw tcp_exception::NotInitialized();
   }
-  const size_t result = tcp_internal::Recv(dst, len, flags, socket_fd_);
+  const size_t result = tcp_shared::Recv(dst, len, flags, socket_fd_);
   DEBUG_PRINT("Received: " << result << " bytes");
   return result;
 }

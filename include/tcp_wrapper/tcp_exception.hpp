@@ -4,7 +4,7 @@
  * @copyright (c) 2025 TheLazyFerret
  *  Licensed under MIT License. See LICENSE file in the project root for full license information.
  * 
- * @brief Header file for exceptions. 
+ * @brief Exceptions definition.
  *   Don't require to be included 
  */
 

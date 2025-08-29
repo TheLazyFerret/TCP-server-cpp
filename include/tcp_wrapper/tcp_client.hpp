@@ -4,7 +4,7 @@
  * @copyright (c) 2025 TheLazyFerret
  *  Licensed under MIT License. See LICENSE file in the project root for full license information.
  * 
- * @brief Header file of TCPClient.
+ * @brief Library wrapping all the quirks of a client socket programming. Uses moderm c++ features.
  */
 
 #ifndef TCP_WRAPPER_CLIENT_HPP
@@ -71,7 +71,7 @@ inline tcp_client::TCPClient::TCPClient(const unsigned short port, const std::st
   memset(&socket_addr_, 0, sizeof(socket_addr_));
   socket_addr_.sin_family = AF_INET;
   socket_addr_.sin_port = htons(port);
-  socket_addr_.sin_addr = tcp_internal::ConvertAddrBinary(address);
+  socket_addr_.sin_addr = tcp_shared::ConvertAddrBinary(address);
 }
 
 /// @brief Destructor of TCPClient.
@@ -93,12 +93,12 @@ inline void tcp_client::TCPClient::Connect() {
   }
   initialized_ = true;
   DEBUG_PRINT("Client succesfully connected to the server: " 
-    << tcp_internal::ConvertAddrSring(socket_addr_.sin_addr));
+    << tcp_shared::ConvertAddrSring(socket_addr_.sin_addr));
 }
 
 /// @brief Initialize the socket file descriptor.
 inline void tcp_client::TCPClient::InitializeSocket() {
-  socket_fd_ = tcp_internal::InitializeSocket();
+  socket_fd_ = tcp_shared::InitializeSocket();
   DEBUG_PRINT("Socket file descriptor created with code: " << socket_fd_);
 }
 
@@ -107,7 +107,7 @@ inline void tcp_client::TCPClient::Kill() {
   if (!initialized_) {
     throw tcp_exception::NotInitialized();
   }
-  tcp_internal::KillSocketfd(socket_fd_);
+  tcp_shared::KillSocketfd(socket_fd_);
   initialized_ = false;
   DEBUG_PRINT("Connection closed");
 }
@@ -121,7 +121,7 @@ inline size_t tcp_client::TCPClient::Send(const void* src, const size_t len, con
   if (!initialized_) {
     throw tcp_exception::NotInitialized();
   }
-  const size_t result = tcp_internal::Send(src, len, flags, socket_fd_);
+  const size_t result = tcp_shared::Send(src, len, flags, socket_fd_);
   DEBUG_PRINT("Sent: " << result << " bytes");
   return result;
 }
@@ -135,7 +135,7 @@ inline size_t tcp_client::TCPClient::Recv(void* dst, const size_t len, const int
   if (!initialized_) {
     throw tcp_exception::NotInitialized();
   }
-  const size_t result = tcp_internal::Recv(dst, len, flags, socket_fd_);
+  const size_t result = tcp_shared::Recv(dst, len, flags, socket_fd_);
   DEBUG_PRINT("Received: " << result << " bytes");
   return result;
 }
