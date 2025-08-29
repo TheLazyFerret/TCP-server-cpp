@@ -39,6 +39,9 @@ Represents a single TCP client connected to a server connection.
 - `TCPClient::Recv(dst*, len, flags)` -> Receives a message from the server connection.
 - `TCPClient::Kill()` -> Closes the connection. Automatically called by the destructor if not done manually.
 
+## Requirements
+Tested using `c++20`, but should compile with any version >= `c++11`
+
 ## Compilation
 Not needed!  
 None of the libraries require separate compilation.
