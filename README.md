@@ -31,7 +31,7 @@ Represents a single connection with a client. It is initialized automatically wh
 
 ### Client (`tcp_client`)
 This library provides one single class: `TCPClient`.
-### `TCPClient` 
+### TCPClient
 Represents a single TCP client connected to a server connection.
 - `TCPClient::TCPClient(port, address)` -> Constructor, sets the parameters but not initialize the client. 
 - `TCPClient::Connect()`->  Initializes the socket and attempts to connect to the server.
