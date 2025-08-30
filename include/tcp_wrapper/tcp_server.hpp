@@ -91,6 +91,9 @@ class TCPConnection {
 
 }
 
+#ifdef DEBUG_PRINT
+  #undef DEBUG_PRINT
+#endif
 #ifdef DEBUG
   #define DEBUG_PRINT(MESSAGE) std::cerr << "[SERVER] " <<  MESSAGE << std::endl
 #else
@@ -200,7 +203,9 @@ inline tcp_server::TCPConnection tcp_server::TCPServer::Accept() const {
   return TCPConnection(client_socket, client_addr);
 }
 
-#undef DEBUG_PRINT
+#ifdef DEBUG_PRINT
+  #undef DEBUG_PRINT
+#endif
 #ifdef DEBUG
   #define DEBUG_PRINT(MESSAGE) std::cerr << "[CONNECTION] " <<  MESSAGE << std::endl
 #else

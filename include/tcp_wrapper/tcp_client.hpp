@@ -55,7 +55,9 @@ class TCPClient {
 };
 
 }
-
+#ifdef DEBUG_PRINT
+  #undef DEBUG_PRINT
+#endif
 #ifdef DEBUG
   #define DEBUG_PRINT(MESSAGE) std::cerr << "[CLIENT] " <<  MESSAGE << std::endl
 #else
